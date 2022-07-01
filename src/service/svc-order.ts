@@ -1,7 +1,7 @@
 import dotenv from "dotenv"
 import { logger } from '../utils/logging/logger';
 import PaymentModule from "../utils/modules/PaymentModule";
-import { IOrder, Order } from "../utils/mongodb/models/Order.schema";
+import { IOrder, Order } from "../utils/mongodb/models/Business.schema";
 import { IProduct } from "../utils/mongodb/models/Product.schema";
 dotenv.config();
 
