@@ -12,10 +12,10 @@ scalar Upload
   }
 
   type Mutation {
-    createProduct(product: ProductInput!): Product
-    updateProduct(product: ProductInput!): Product
-    deleteProduct(productId: String!): Boolean
-    checkout(cart: [ShoppingCartProduct!]!): CheckoutReturn
+    createUser(user: UserInput!): User
+    updateUser(product: ProductInput!): Product
+    deleteUser(productId: String!): Boolean
+    getUser(cart: [ShoppingCartProduct!]!): CheckoutReturn
   }
 
   type Product {
@@ -32,12 +32,12 @@ scalar Upload
     status: String
   }
 
-  input ProductInput {
-    _id: ID
-    details: String!
-    price: Int!
-    name: String!
-    image: Upload!
+  input UserInput {
+    firstName: String!
+    lastName: String!
+    email: String!
+    password: String!
+    image: Upload
   }
 
   input ShoppingCartProduct {

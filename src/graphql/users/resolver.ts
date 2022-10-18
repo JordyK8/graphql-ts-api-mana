@@ -6,6 +6,8 @@ import { IProduct } from '../../utils/mongodb/models/Product.schema';
 import { GraphQLUpload } from "graphql-upload";
 import OrderService from '../../service/svc-order';
 import { checkPermissions } from '../middleware';
+import { IUser } from '../../utils/mongodb/models/User.schema';
+import UserService from '../../service/svc-user';
 const resolvers = {
   Upload: GraphQLUpload,
   Query: {
@@ -18,11 +20,8 @@ const resolvers = {
   },
 
   Mutation: {
-    createProduct: async(parent: any, { product }: { product: IProduct }, { userId }: { userId: string}) => {
-      const permission = await checkPermissions(userId, "product", 2);
-      if (!permission) throw new Error("NO_ACCESS");
-      const res = await ProductService.createProduct(product)
-      console.log(res);
+    createUser: async(parent: any, { user }: { user: IUser }, _: any) => {
+      const res = await UserService.register(user)
       return res;
       
     },

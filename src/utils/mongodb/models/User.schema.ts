@@ -1,3 +1,4 @@
+import { accessibleRecordsPlugin } from '@casl/mongoose';
 import mongoose, { Document, Schema } from 'mongoose';
 import Crypt from '../../Crypt/encryption';
 import Hash from '../../Crypt/hashing';
@@ -25,6 +26,17 @@ const userSchema = new mongoose.Schema({
     set: Crypt.encrypt,
     required: true
   },
+  image: {
+    type: String,
+    required: false
+  },
+  reviews: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: Review,
+      required: false
+    },
+  ],
   roles: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -35,12 +47,16 @@ const userSchema = new mongoose.Schema({
 },
 { versionKey: false });
 
+//Casl plugin for access check
+userSchema.plugin(accessibleRecordsPlugin)
+
 export interface UUser {
   email: string,
   password: string,
   firstName: string,
   lastName: string,
   roles: string[],
+  image: string,
 }
 
 interface IUserModel extends UUser, Document { }

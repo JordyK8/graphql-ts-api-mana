@@ -2,11 +2,18 @@
 Copyright (c) 2019-present NAVER Corp.
 MIT license */
 import mongoose from 'mongoose';
+import { accessibleRecordsPlugin } from '@casl/mongoose';
 import { logger } from '../logging/logger';
+
 
 // it is mongo memory server for boilerplate sample
 // remove it and replace to real mongoDB in production environment
 function connectMongoDB(): void {
+
+
+  // Implementiong CASL and using its plugin here
+  mongoose.plugin(accessibleRecordsPlugin);
+
 
   // replace real mongoDB connection in production environment
 

@@ -35,6 +35,8 @@
     "typescript": "^3.6.3"
   },
   "dependencies": {
+    "@casl/ability": "^6.3.1",
+    "@casl/mongoose": "^7.1.0",
     "@godaddy/terminus": "^4.2.0",
     "@mollie/api-client": "^3.6.0",
     "@types/jsonwebtoken": "^8.5.8",
