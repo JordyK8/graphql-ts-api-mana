@@ -4,6 +4,9 @@ import dotenv from "dotenv"
 
 dotenv.config();
 export default class {
+  public static upload(data: any | { name: string, data: Buffer, mimeType: string }) {
+    return process.env.APP_ENV === 'production' ? this.uploadToGCS(data) : this.uploadToImbb(data.stream)
+  }
   public static async uploadToImbb(fileStream: any) {    
     const streamToBase64 = (fileStream: any) => {
       const concat = require('concat-stream')
@@ -33,5 +36,8 @@ export default class {
     const res = await imgbbUploader(options)
     const url = res.url;
     return url;
+  }
+  public static async uploadToGCS(fileStream: any) {
+    
   }
 }

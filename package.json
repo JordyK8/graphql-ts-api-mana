@@ -10,10 +10,10 @@
     "build": "yarn run clean && tsc --build"
   },
   "author": {
-    "name": "HANSUK KIM",
-    "email": "hansuk.kim@navercorp.com"
+    "name": "Jordy Kokelaar",
+    "email": "jordykokelaar@gmail.com"
   },
-  "license": "MIT",
+  "license": "none",
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
     "@types/chai": "^4.2.2",
