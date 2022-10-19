@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head'); %>
+</head>
+<body id="body">
+
+<header>
+    <%- include('../partials/header', {title:'Data request'}); %>
+</header>
+
+<main>
+    <div class="container border-black my-4 p-4 h-85vh text-center">
+    <h1>Donwload data</h1>
+    <form action="<%= url %>/api/export/download?token=<%= token %>&downloadRequestId=<%= downloadRequestId %>&gameId=<%= gameId %>" method="post">
+        <input type="text" name="smsCode" id="smsCode">
+        <input type="submit" value="submit">
+    </form>
+    </div>
+</main>
+<script>
+
+</script>
+</body>
+</html>

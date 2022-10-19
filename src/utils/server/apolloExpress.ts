@@ -32,20 +32,6 @@ async function runServer() {
   app.use(cookieParser());
   applyApollo(app);
 
-  app.post('/order', (req, res) => {
-    console.log('order hit webhook post!');
-    console.log(req.query);
-    
-    console.log(req.body);
-    
-  })
-  app.get('/order', (req, res) => {
-    console.log('order hit webhook get!');
-    console.log(req.query);
-    
-    console.log(req.body);
-    
-  })
   // create server
   const server = http.createServer(app);
 
@@ -69,9 +55,11 @@ async function applyApollo(app: any) {
   // applly apollo confing to express app
   const apolloConfig: ApolloServerExpressConfig = {
     schema: allSchema,
-    context: async ctx => {
+    context: async (ctx: any) => {
       let userId;
-      const token = ctx.req.headers.authorization || '';
+      console.log(ctx.req.headers);
+      
+      const token = ctx.req.headers.authorization as any || '';
       // if (token) userId = JWT.decipher(token);
       console.log('token', token);
       return { userId };

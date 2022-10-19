@@ -149,4 +149,12 @@ export default class Crypt {
     private static isValidPayload(payload: any) {
         return (payload.hasOwnProperty('iv') && payload.hasOwnProperty('value') && payload.hasOwnProperty('mac'));
     }
+    
+    /**
+     * Generate random string
+     * @param {Object} payload
+     */
+    public static randomString(bytes: number) {
+        return crypto.randomBytes(bytes).toString('base64');
+    }
 }

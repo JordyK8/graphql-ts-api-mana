@@ -13,7 +13,9 @@ scalar Upload
 
   type Mutation {
     createUser(user: UserInput!): User
-    updateUser(product: ProductInput!): Product
+    inviteUser(user: UserInputInvite!, hook: String): Boolean
+    confirmUser(userId: ID!): Boolean
+    updateUser(product: UserInput!): Product
     deleteUser(productId: String!): Boolean
     getUser(cart: [ShoppingCartProduct!]!): CheckoutReturn
   }
@@ -37,6 +39,19 @@ scalar Upload
     lastName: String!
     email: String!
     password: String!
+    image: Upload
+  }
+
+  input UserInputInvite {
+    email: String!
+    company: ID!
+    role: ID!
+  }
+
+  type User {
+    firstName: String!
+    lastName: String!
+    email: String!
     image: Upload
   }
 

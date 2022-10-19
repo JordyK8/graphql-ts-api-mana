@@ -8,6 +8,7 @@ import OrderService from '../../service/svc-order';
 import { checkPermissions } from '../middleware';
 import { IUser } from '../../utils/mongodb/models/User.schema';
 import UserService from '../../service/svc-user';
+import UserInputInvite from './Interfaces';
 const resolvers = {
   Upload: GraphQLUpload,
   Query: {
@@ -21,22 +22,13 @@ const resolvers = {
 
   Mutation: {
     createUser: async(parent: any, { user }: { user: IUser }, _: any) => {
-      const res = await UserService.register(user)
-      return res;
-      
+      return UserService.register(user)
     },
-    updateProduct: async (parent: any, { product }: { product: IProduct }, { userId }: { userId: string }) => {
-      const permission = await checkPermissions(userId, "product", 2);
-      if (!permission) throw new Error("NO_ACCESS");
-      return ProductService.updateProduct(product)
+    inviteUser: async (parent: any, { user, hook }: { user: UserInputInvite, hook: string }, { userId }: { userId: string }) => {
+      return UserService.invite(user, hook)
     },
-    deleteProduct: async (parent: any, { product }: { product: IProduct }, { userId }: { userId: string }) => {
-      const permission = await checkPermissions(userId, "product", 3);
-      if (!permission) throw new Error("NO_ACCESS");
-      return ProductService.updateProduct(product)
-    },
-    checkout: (parent: any, { cart }: { cart: any }, { userId }: { userId: string }) => {
-      return OrderService.create(cart)
+    confirmUser: async (parent: any, { id }: { id: string }, { userId }: { userId: string }) => {
+      return UserService.confirm(id)
     },
   },
 };

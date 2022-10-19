@@ -30,13 +30,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false
   },
-  reviews: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: Review,
-      required: false
-    },
-  ],
+  // reviews: [
+  //   {
+  //     type: mongoose.Schema.Types.ObjectId,
+  //     ref: Review,
+  //     required: false
+  //   },
+  // ],
   roles: [
     {
       type: mongoose.Schema.Types.ObjectId,

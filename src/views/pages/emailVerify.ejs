@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head'); %>
+</head>
+<body id="body">
+
+<header>
+    <%- include('../partials/header', {title:'Data request'}); %>
+</header>
+
+<main>
+    <div class="container border-black my-4 p-4 h-85vh text-center">
+    <h1>Verify Email</h1>
+    <form action="<%= url %>/player/register/verify?token=<%= token %>&gameId=<%= gameId %>&id=<%= id %>" method="post">
+        <input type="submit" value="submit">
+    </form>
+    </div>
+</main>
+<script>
+
+</script>
+</body>
+</html>
