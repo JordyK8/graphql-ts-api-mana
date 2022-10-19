@@ -4,10 +4,21 @@ import dotenv from "dotenv"
 
 dotenv.config();
 export default class {
-  public static upload(data: any | { name: string, data: Buffer, mimeType: string }) {
+  /**
+   * Upload file to eigther imbb or gcs depending on the environment
+   * @param data 
+   * @returns 
+   */
+  public static upload(data: any | { name: string, data: Buffer, mimeType: string }): Promise<string> {
     return process.env.APP_ENV === 'production' ? this.uploadToGCS(data) : this.uploadToImbb(data.stream)
   }
-  public static async uploadToImbb(fileStream: any) {    
+  
+  /**
+   * Upload file to Imbb and return url
+   * @param fileStream 
+   * @returns 
+   */
+  public static async uploadToImbb(fileStream: any): Promise<string> {    
     const streamToBase64 = (fileStream: any) => {
       const concat = require('concat-stream')
       const { Base64Encode } = require('base64-stream')
@@ -37,7 +48,13 @@ export default class {
     const url = res.url;
     return url;
   }
-  public static async uploadToGCS(fileStream: any) {
-    
+  
+  /**
+   * Upload file to GCS and return url
+   * @param fileStream 
+   * @returns 
+   */
+  public static async uploadToGCS(fileStream: any): Promise<string> {
+    return "hoi"
   }
 }
