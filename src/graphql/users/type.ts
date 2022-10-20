@@ -15,7 +15,7 @@ scalar Upload
     createUser(user: UserInput!): User
     inviteUser(user: UserInputInvite!, hook: String): Boolean
     confirmUser(userId: ID!): Boolean
-    updateUser(product: UserInput!): Product
+    updateUser(product: UserInput!): User
     deleteUser(productId: String!): Boolean
     getUser(cart: [ShoppingCartProduct!]!): CheckoutReturn
   }
