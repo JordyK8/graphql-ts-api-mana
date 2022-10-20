@@ -1,23 +1,19 @@
 /* graphql-server-boilerplate
 Copyright (c) 2019-present NAVER Corp.
 MIT license */
-import ProductService from '../../service/svc-product';
-import { IProduct } from '../../utils/mongodb/models/Product.schema';
 import { GraphQLUpload } from "graphql-upload";
-import OrderService from '../../service/svc-order';
-import { checkPermissions } from '../middleware';
 import { IUser } from '../../utils/mongodb/models/User.schema';
 import UserService from '../../service/svc-user';
 import UserInputInvite from './Interfaces';
 const resolvers = {
   Upload: GraphQLUpload,
   Query: {
-    product: (parent: any, { productId }: { productId: string }, { userId }: { userId: string }) => {
-      return ProductService.getProduct(productId)
-    },
-    getProducts: (parent: any) => {
-      return ProductService.getProductList()
-    },
+    // product: (parent: any, { productId }: { productId: string }, { userId }: { userId: string }) => {
+    //   return ProductService.getProduct(productId)
+    // },
+    // getProducts: (parent: any) => {
+    //   return ProductService.getProductList()
+    // },
   },
 
   Mutation: {
@@ -29,6 +25,9 @@ const resolvers = {
     },
     confirmUser: async (parent: any, { id }: { id: string }, { userId }: { userId: string }) => {
       return UserService.confirm(id)
+    },
+    updateUser: async (parent: any, { id }: { id: string }, { userId }: { userId: string }) => {
+      return UserService.update(id)
     },
   },
 };
