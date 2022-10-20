@@ -10,40 +10,38 @@ import { logger } from '../logging/logger';
 // remove it and replace to real mongoDB in production environment
 function connectMongoDB(): void {
 
+    // Implementiong CASL and using its plugin here
+    mongoose.plugin(accessibleRecordsPlugin);
 
-  // Implementiong CASL and using its plugin here
-  mongoose.plugin(accessibleRecordsPlugin);
+    // replace real mongoDB connection in production environment
 
+    // If on a linux server, use the hostname provided by the docker compose file
+    // e.g. HOSTNAME = mongo1, mongo2, mongo3
 
-  // replace real mongoDB connection in production environment
+    // If on MacOS add the following to your /etc/hosts file.
+    // 127.0.0.1  mongo1
+    // 127.0.0.1  mongo2
+    // 127.0.0.1  mongo3
+    // And use localhost as the HOSTNAME
+    mongoose.connect('mongodb://localhost:27017/shop', {
+        useNewUrlParser: true,
+        useFindAndModify: false, // optional
+        useCreateIndex: true,
+        useUnifiedTopology: true,
+    })
 
-// If on a linux server, use the hostname provided by the docker compose file
-// e.g. HOSTNAME = mongo1, mongo2, mongo3
-
-// If on MacOS add the following to your /etc/hosts file.
-// 127.0.0.1  mongo1
-// 127.0.0.1  mongo2
-// 127.0.0.1  mongo3
-// And use localhost as the HOSTNAME
-mongoose.connect('mongodb://localhost:27017/shop', {
-  useNewUrlParser : true,
-  useFindAndModify: false, // optional
-  useCreateIndex: true,
-  useUnifiedTopology: true,
-})
-  
     mongoose.connection.on('error', e => {
-      logger.error(e);
+        logger.error(e);
     });
 
     mongoose.connection.once('open', () => {
-      logger.info(`MongoDB successfully connected`);
+        logger.info(`MongoDB successfully connected`);
     });
 
 }
 
-async function disconnectMongoDB() {
-  mongoose.disconnect();
+function disconnectMongoDB() {
+    mongoose.disconnect();
 }
 
 export { connectMongoDB, disconnectMongoDB };

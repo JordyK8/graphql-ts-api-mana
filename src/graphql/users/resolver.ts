@@ -27,7 +27,7 @@ const resolvers = {
       return UserService.confirm(id)
     },
     updateUser: async (parent: any, { id }: { id: string }, { userId }: { userId: string }) => {
-      return UserService.update(id)
+      // return UserService.update(id)
     },
   },
 };
