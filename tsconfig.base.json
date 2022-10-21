@@ -1,24 +1,27 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "rootDir": ".",
-    "sourceMap": true,
-    "declaration": false,
+    "module": "commonjs",
+    "target": "es5",
+    "lib": ["es2015", "es2015.promise", "esnext.asynciterable"],
+    "outDir": "./dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
-    "target": "es2015",
-    "module": "esnext",
-    "lib": ["es2017", "dom"],
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
+    "sourceMap": true,
+    // "declaration": false,
+    // "emitDecoratorMetadata": true,
+    // "experimentalDecorators": true,
+    // "importHelpers": true,
+    // "skipLibCheck": true,
+    // "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@my-foods2/logging": ["libs/logging/src/index.ts"],
       "@my-foods2/products-data-client": [
         "libs/products-data-client/src/index.ts"
       ]
     }
   },
-  "exclude": ["node_modules", "tmp"]
-}
+  "exclude": ["node_modules", "**/__test__/*", "tmp"]}

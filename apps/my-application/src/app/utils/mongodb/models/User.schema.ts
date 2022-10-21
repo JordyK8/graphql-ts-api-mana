@@ -1,4 +1,4 @@
-import { accessibleRecordsPlugin } from '@casl/mongoose';
+// import { accessibleRecordsPlugin } from '@casl/mongoose';
 import mongoose, { Document, Schema } from 'mongoose';
 import Crypt from '../../Crypt/encryption';
 import Hash from '../../Crypt/hashing';
@@ -40,8 +40,6 @@ const userSchema = new mongoose.Schema({
 },
 { versionKey: false });
 
-//Casl plugin for access check
-userSchema.plugin(accessibleRecordsPlugin)
 
 export interface UUser {
   email: string,

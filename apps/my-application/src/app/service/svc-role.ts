@@ -1,5 +1,5 @@
 import dotenv from "dotenv"
-import { logger } from '../utils/logging/logger';
+import { logging as logger } from "@my-foods2/logging";
 import { IRole, Role } from "../utils/mongodb/models/Role.schema";
 dotenv.config();
 

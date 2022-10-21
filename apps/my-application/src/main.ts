@@ -1,10 +1,12 @@
 import { start } from "./app/command";
-import { logger } from "./app/utils/logging/logger";
+import { logging } from "@my-foods2/logging"
 
 main();
 
 async function main() {
-  console.log("LOGGGG - HKHKJHASLKJDHLASKJDHASLKDJHASLKJSd")
-  logger.info("HKHKJHASLKJDHLASKJDHASLKDJHASLKJSd")
+  
+  logging.info("hoi")
+  
+  
   start()
 }

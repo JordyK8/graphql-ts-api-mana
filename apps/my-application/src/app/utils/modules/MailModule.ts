@@ -5,8 +5,7 @@ import ejs from "ejs";
 import path from "path";
 import lodash from "lodash";
 import DateModule from "./DateModule";
-import { logger } from "../logging/logger";
-
+import { logging as logger } from "@my-foods2/logging";
 export class MailModule {
     private transporter: nodemailer.Transporter;
 

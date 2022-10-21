@@ -1,7 +1,7 @@
 import dotenv from "dotenv"
 import UserInputInvite from "../graphql/users/Interfaces";
 import Crypt from "../utils/Crypt/encryption";
-import { logger } from '../utils/logging/logger';
+import { logging as logger } from "@my-foods2/logging";
 import MailModule from "../utils/modules/MailModule";
 import UploadModule from "../utils/modules/UploadModule";
 import { IRole, Role } from "../utils/mongodb/models/Role.schema";

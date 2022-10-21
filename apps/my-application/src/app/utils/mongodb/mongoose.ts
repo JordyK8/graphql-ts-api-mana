@@ -3,8 +3,7 @@ Copyright (c) 2019-present NAVER Corp.
 MIT license */
 import mongoose from 'mongoose';
 import { accessibleRecordsPlugin } from '@casl/mongoose';
-import { logger } from '../logging/logger';
-
+import { logging as logger } from "@my-foods2/logging";
 
 // it is mongo memory server for boilerplate sample
 // remove it and replace to real mongoDB in production environment

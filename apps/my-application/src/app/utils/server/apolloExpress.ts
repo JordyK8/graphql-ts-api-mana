@@ -10,7 +10,7 @@ import { createTerminus } from '@godaddy/terminus';
 import { disconnectMongoDB } from '../mongodb/mongoose';
 import { allSchema } from '../../graphql/schema';
 import helmet from 'helmet';
-import { logger } from '../logging/logger';
+import { logging as logger } from "@my-foods2/logging";
 import { graphqlUploadExpress } from "graphql-upload"
 import cors from "cors";
 import JWT from '../JWT';
