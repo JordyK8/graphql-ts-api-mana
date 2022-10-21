@@ -34,6 +34,11 @@
             "date": 1666378072830,
             "name": "logs/app-console-2022-10-21-20.log",
             "hash": "53df212ab99638510b2dd1e454a12a1c8e8ec645a68a9893fadee93cc2863a5c"
+        },
+        {
+            "date": 1666388176066,
+            "name": "logs/app-console-2022-10-21-23.log",
+            "hash": "c5d585a2426fdb58b970650908a6e4f1860bb138ad3208da5e97818c448583f7"
         }
     ],
     "hashType": "sha256"

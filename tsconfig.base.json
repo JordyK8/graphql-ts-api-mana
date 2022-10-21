@@ -10,18 +10,14 @@
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "sourceMap": true,
-    // "declaration": false,
-    // "emitDecoratorMetadata": true,
-    // "experimentalDecorators": true,
-    // "importHelpers": true,
-    // "skipLibCheck": true,
-    // "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
       "@my-foods2/logging": ["libs/logging/src/index.ts"],
       "@my-foods2/products-data-client": [
         "libs/products-data-client/src/index.ts"
-      ]
+      ],
+      "@my-foods2/variables": ["libs/variables/src/index.ts"]
     }
   },
-  "exclude": ["node_modules", "**/__test__/*", "tmp"]}
+  "exclude": ["node_modules", "**/__test__/*", "tmp"]
+}

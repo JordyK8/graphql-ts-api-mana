@@ -5,7 +5,10 @@
   "scripts": {
     "start": "nx serve",
     "build": "nx build",
-    "test": "nx test"
+    "test": "nx test",
+    "test:all": "nx run-many --target=test",
+    "test:affected:dev": "nx affected --target=test",
+    "graph:affected:dev": "nx affected:graph --base=development"
   },
   "author": {
     "name": "Jordy Kokelaar",
