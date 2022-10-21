@@ -1,11 +1,11 @@
 import { start } from "./app/command";
-import { logging } from "@my-foods2/logging"
+import { logging as logger } from "@my-foods2/logging"
 
 main();
 
 async function main() {
   
-  logging.info("hoi")
+  logger.info("hoi")
   
   
   start()
