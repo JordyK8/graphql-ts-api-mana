@@ -39,6 +39,31 @@
             "date": 1666388176066,
             "name": "logs/app-console-2022-10-21-23.log",
             "hash": "c5d585a2426fdb58b970650908a6e4f1860bb138ad3208da5e97818c448583f7"
+        },
+        {
+            "date": 1666446392401,
+            "name": "logs/app-console-2022-10-22-15.log",
+            "hash": "62464ada2568adb085b48f847a9f17ff2619a39754729c09d199955e0ca87c3d"
+        },
+        {
+            "date": 1666448448455,
+            "name": "logs/app-console-2022-10-22-16.log",
+            "hash": "24f7b22a36a0904d857bbf2700e178853eaad0fc6a47790f244d7e8595af6d25"
+        },
+        {
+            "date": 1666455225841,
+            "name": "logs/app-console-2022-10-22-18.log",
+            "hash": "f6f150cf1dcc68b777aa562d9852733d7c4548686b980d877788c58a59c807db"
+        },
+        {
+            "date": 1666467713911,
+            "name": "logs/app-console-2022-10-22-21.log",
+            "hash": "a9ccec2c1c92d5d73d0e0a2c00c5c33bacf855d069651ccc7e6c0219f4a42d40"
+        },
+        {
+            "date": 1666468832081,
+            "name": "logs/app-console-2022-10-22-22.log",
+            "hash": "cff8e156a9b6edc65099cae1d6fb210dbc2015a8661c7b6028d980e99d42f297"
         }
     ],
     "hashType": "sha256"

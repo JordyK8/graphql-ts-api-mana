@@ -1,23 +1,24 @@
 {
-  "compileOnSave": false,
-  "compilerOptions": {
-    "module": "commonjs",
-    "target": "es5",
-    "lib": ["es2015", "es2015.promise", "esnext.asynciterable"],
-    "outDir": "./dist",
-    "strict": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "moduleResolution": "node",
-    "sourceMap": true,
-    "baseUrl": ".",
-    "paths": {
-      "@my-foods2/logging": ["libs/logging/src/index.ts"],
-      "@my-foods2/products-data-client": [
-        "libs/products-data-client/src/index.ts"
-      ],
-      "@my-foods2/variables": ["libs/variables/src/index.ts"]
-    }
-  },
-  "exclude": ["node_modules", "**/__test__/*", "tmp"]
+    "compileOnSave": false,
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "lib": ["es2015", "es2015.promise", "esnext.asynciterable"],
+        "outDir": "./dist",
+        "strict": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "baseUrl": ".",
+        "paths": {
+            "@my-foods2/logging": ["libs/logging/src/index.ts"],
+            "@my-foods2/products-data-client": [
+                "libs/products-data-client/src/index.ts"
+            ],
+            "@my-foods2/rabbitmq": ["libs/rabbitmq/src/index.ts"],
+            "@my-foods2/variables": ["libs/variables/src/index.ts"]
+        }
+    },
+    "exclude": ["node_modules", "**/__test__/*", "tmp"]
 }

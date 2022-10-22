@@ -7,7 +7,10 @@ services:
     volumes:
       - mongodb_data_container:/data/db
   rabbitmq:
-    image: rabbitmq:3.8.25-management-alpine
+    image: heidiks/rabbitmq-delayed-message-exchange:latest
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=password
     container_name: 'rabbitmq'
     ports:
         - 5672:5672
