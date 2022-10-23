@@ -14,10 +14,16 @@ import { logging as logger } from "@my-foods2/logging";
 import { graphqlUploadExpress } from "graphql-upload"
 import cors from "cors";
 import JWT from '../JWT';
+import client from "prom-client";
+const collectDefaultMetrics = client.collectDefaultMetrics;
+collectDefaultMetrics()
 async function runServer() {
   const app = express();
   const port = 3000;
-
+  app.get('/metrics', (req, res) => {
+    res.set('Content-Type', client.register.contentType)
+    res.end(client.register.metrics())
+  })
   if (process.env.NODE_ENV === 'development') {
     app.use(errorhandler());
   }

@@ -1,22 +1,35 @@
-import amqp from "amqplib";
+import amqp, { Message, Options } from "amqplib";
 import { logging as logger } from "@my-foods2/logging";
+
+interface ExchangeObject {
+    exchange: string,
+    type: 'direct' | 'topic' | 'headers' | 'fanout' | 'match' | 'x-delayed-message' | string,
+    options?: Options.AssertExchange
+}
+interface QueueObject {
+    queue: string,
+    options?: Options.AssertQueue
+}
 
 export default class Amqp {
     private workerChannel: amqp.Channel | null;
+    private channel: amqp.Channel | null;
     private pubChannel: amqp.Channel | null;
-    private exchange: string;
+    private exchanges: ExchangeObject[];
     private offlinePubQueue: any;
-    private queue: string;
+    private queues: QueueObject[];
     private connection: amqp.Connection | null;
-    constructor(exchange: string, queue: string) {
+
+    constructor(exchanges: ExchangeObject[], queues: QueueObject[]) {
+        this.channel = null;
         this.pubChannel = null;
         this.workerChannel = null;
         this.offlinePubQueue = [];
         this.connection = null;
-        this.queue = queue;
-        this.exchange = exchange;
+        this.queues = queues;
+        this.exchanges = exchanges;
     }
-    async start() {        
+    async init() {        
         this.connection = await amqp.connect("amqp://admin:password@localhost" + "?heartbeat=60");
         
         if (!this.connection) throw new Error("NO_AMQP_CONNECTION")
@@ -27,17 +40,40 @@ export default class Amqp {
     
         this.connection.on("close", () => {
             logger.error("[AMQP] reconnecting");
-            return setTimeout(this.start, 1000);
+            return setTimeout(this.init, 1000);
         });
     
         logger.info("[AMQP] connected");
         await this.whenConnected();
     }
     async whenConnected() {
-        await this.startPublisher();
-        await this.startWorker();
+        await this.createExchanges();
+        await this.createQueues();
     }
-    async startPublisher() {
+
+    private async createExchanges() {
+        if (!this.connection) throw new Error("No connection when creating exchanges");
+        this.channel = await this.connection.createConfirmChannel()
+        if (!this.channel) throw new Error("No channel open when creating exchanges");
+        // try reconnecting on no connection and do this a few times then only throw error;
+        for (const exchange of this.exchanges) {
+            // exchange example : {name: 'test-exchange', type: "x-delayed-message", options: { autoDetele: false, durable:true, arguments: { "x-delayed-type": "direct"}}}
+            await this.channel.assertExchange(exchange.exchange, exchange.type, exchange.options)
+        }
+    }
+    private async createQueues() {
+        if (!this.connection) throw new Error("No connection when creating exchanges");
+        this.channel = await this.connection.createConfirmChannel()
+        if (!this.channel) throw new Error("No channel open when creating exchanges");
+        // try reconnecting on no connection and do this a few times then only throw error;
+        for (const queue of this.queues) {
+            // queue example : {name: 'test-q', options: { durable: true }
+            await this.channel.assertQueue(queue.queue, queue.options)
+        }
+    }
+
+
+    async startPublisher(queue: string, exchange: string) {
         if(!this.connection) throw new Error("No connection")
         this.pubChannel = await this.connection.createConfirmChannel()
         this.pubChannel.on("error", (err) => {
@@ -49,34 +85,57 @@ export default class Amqp {
             logger.info("[AMQP] channel closed");
         });
     
-        //assert the exchange: 'my-delay-exchange' to be a x-delayed-message,
-        this.pubChannel.assertExchange(this.exchange, "x-delayed-message", { autoDelete: false, durable: true, arguments: { 'x-delayed-type': "direct" } })
+        ////assert the exchange: 'my-delay-exchange' to be a x-delayed-message,
+        // this.pubChannel.assertExchange(this.exchange, "x-delayed-message", { autoDelete: false, durable: true, arguments: { 'x-delayed-type': "direct" } })
+        
         //Bind the queue: this.queue to the exchnage: this.exchange with the binding key this.queue
-        this.pubChannel.bindQueue(this.queue, this.exchange, this.queue);
-    
+        // second this.queue (3rd arg) is routingkey
+        this.pubChannel.bindQueue(queue, exchange, queue);
+        
         // eslint-disable-next-line no-constant-condition
         while (true) {
             const m = this.offlinePubQueue.shift();
             if (!m) break;
-            this.publish(m[0], m[1], m[2]);
+            this.publish(m[0], m[1], m[2], m[3], 3);
         }
     }
-    publish(routingKey: string, content: any, delay: number) {
+    publish(exchange: string, routingKey: string, content: any, options: Options.Publish, maxDelayRetries: number) {
+        options.headers = { maxDelayRetries };
         try {
-            if (!this.pubChannel) return this.start()
-            const published = this.pubChannel.publish(this.exchange, routingKey, content, { headers: { "x-delay": delay } });
+            if (!this.pubChannel) throw new Error("NO CHANNEL")
+            const published = this.pubChannel.publish(exchange, routingKey, content, options);
             if (!published) {
                 logger.error("[AMQP] publish failed");
-                this.offlinePubQueue.push([this.exchange, routingKey, content]);
+                this.offlinePubQueue.push([exchange, routingKey, content, options]);
                 this.pubChannel.close();
             }
         } catch (e: any) {
             logger.error(`[AMQP] failed ${e.message}`);
-            this.offlinePubQueue.push([routingKey, content, delay]);
+            this.offlinePubQueue.push([exchange, routingKey, content, options]);
         }
     }
+    // publishWithDelay(msg: Message) {
+    //     console.log(msg.properties.headers["x-death"]);
+    //     console.log(msg.properties.headers);
+        
+    //     if(msg.properties.headers["x-death"] > msg.properties.headers.maxDelayRetries)
+    //     if(delay) Object.assign(options.headers, { "x-delay": delay })
+    //     try {
+    //         if (!this.pubChannel) throw new Error("NO CHANNEL")
+    //         const published = this.pubChannel.publish(exchange, routingKey, content, options);
+    //         if (!published) {
+    //             logger.error("[AMQP] publish failed");
+    //             this.offlinePubQueue.push([exchange, routingKey, content]);
+    //             this.pubChannel.close();
+    //         }
+    //     } catch (e: any) {
+    //         logger.error(`[AMQP] failed ${e.message}`);
+    //         this.offlinePubQueue.push([routingKey, content, delay]);
+    //     }
+    // }
+
     // A worker that acks messages only if processed succesfully
-    async startWorker() {
+    async startWorker(queue: string, handler: (msg: Message, cb: any) => void) {
         if(!this.connection) throw new Error("No connection")
         this.workerChannel = await this.connection.createConfirmChannel()
         this.workerChannel.on("error", (err) => {
@@ -89,10 +148,15 @@ export default class Amqp {
         });
 
         await this.workerChannel.prefetch(10);
-        await this.workerChannel.assertQueue(this.queue, { durable: true });
-        this.workerChannel.consume(this.queue, (msg) => {
+        await this.workerChannel.assertQueue(queue, { durable: true });
+        
+        this.workerChannel.consume(queue, (msg) => {
             if (!msg) return;
-            this.work(msg, (ok: boolean) => {
+            console.log(msg.properties.headers["x-death"]);
+            console.log(msg.properties.headers);
+            console.log(msg.properties
+            );
+            handler(msg, (ok: boolean) => {
                 if (!this.workerChannel) throw new Error("Channel not initialized")
                 try {
                     if (ok) this.workerChannel.ack(msg as amqp.Message);
@@ -104,11 +168,6 @@ export default class Amqp {
         }, { noAck: false });
         
         logger.info("Worker is started");
-    }
-
-    work(msg: amqp.Message, cb: any) {
-        logger.info(msg.content.toString() + " --- received: " + this.current_time());
-        cb(true);
     }
     
     closeOnErr(err: Error) {

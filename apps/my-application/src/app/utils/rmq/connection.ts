@@ -1,26 +1,46 @@
 // import amqp, { ConsumeMessage, Message } from "amqplib"
 import Amqp from "./Rmq";
-
+import { logging as logger } from "@my-foods2/logging";
+import { Message } from "amqplib";
 
 export const connectRMQ = async () => {
     // worker()
     // task()
-    const rmq = new Amqp("test-ex", "test-q");
-    await rmq.start();
-    const rmq2 = new Amqp("test-ex2", "test-q2");
-    await rmq2.start();
+    const exchanges = [{
+        exchange: "test-x2",
+        type: 'direct',
+        options: { autoDetele: false, durable: true }
+    },
+    {
+        exchange: "dlx.cmd",
+        type: "direct",
+        options: { autoDelete: false, durable: true }
+        }
+    ]
+    const queues = [
+        {
+            queue: "cmd-dlx-queue",
+            options: { durable: true }
+            },
+        {
+        queue: "test-q2",
+        options: { durable: true, deadLetterExchange: "dlx.cmd" },
+    },
+    ]
+    const rmq = new Amqp(exchanges, queues);
+    await rmq.init();
+    await rmq.startWorker("test-q2", (msg: Message, cb: any) => {
+        logger.info(msg.content.toString() + " --- received: " + rmq.current_time());
+        const is = Math.floor(Math.random() * 4) === 2
+        cb(true);
+    });
+    await rmq.startPublisher(queues[0].queue, exchanges[0].exchange);
     //Publish a message every 10 second. The message will be delayed 10seconds.
     setInterval(function() {
         const date = new Date();
         const time = rmq.current_time()
-        rmq.publish("test-q", Buffer.from("work sent: " + time), 10000);
-    }, 10000);
-    setInterval(function() {
-        const date = new Date();
-        const time = rmq2.current_time()
-        rmq2.publish("test-q2", Buffer.from("work sent2: " + time), 3000);
-    }, 3000);
-    
+        rmq.publish(exchanges[0].exchange, queues[0].queue, Buffer.from("work sent: " + time), {}, 3);
+    }, 3000);    
 }
 
 // async function task() {

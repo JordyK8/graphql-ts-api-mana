@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
+    "pm2:start:my-application": "pm2 start npm start my-application",
     "build": "nx build",
     "test": "nx test",
     "test:all": "nx run-many --target=test",
@@ -45,6 +46,7 @@
     "luxon": "^3.0.4",
     "mongoose": "^6.0.13",
     "nodemailer": "^6.8.0",
+    "prom-client": "^14.1.0",
     "tslib": "^2.3.0",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^4.1.0"
