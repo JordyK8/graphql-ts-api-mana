@@ -15,19 +15,19 @@ export default class Amqp {
     private workerChannel: amqp.Channel | null;
     private channel: amqp.Channel | null;
     private pubChannel: amqp.Channel | null;
-    private exchanges: ExchangeObject[];
+    private exchange: ExchangeObject;
     private offlinePubQueue: any;
-    private queues: QueueObject[];
+    private queue: QueueObject;
     private connection: amqp.Connection | null;
 
-    constructor(exchanges: ExchangeObject[], queues: QueueObject[]) {
+    constructor(exchange: ExchangeObject, queue: QueueObject) {
         this.channel = null;
         this.pubChannel = null;
         this.workerChannel = null;
         this.offlinePubQueue = [];
         this.connection = null;
-        this.queues = queues;
-        this.exchanges = exchanges;
+        this.queue = queue;
+        this.exchange = exchange;
     }
     async init() {        
         this.connection = await amqp.connect("amqp://admin:password@localhost" + "?heartbeat=60");
@@ -47,31 +47,33 @@ export default class Amqp {
         await this.whenConnected();
     }
     async whenConnected() {
-        await this.createExchanges();
-        await this.createQueues();
+        await this.createExchangeAndQueue();
     }
 
-    private async createExchanges() {
+    private async createExchangeAndQueue() {
         if (!this.connection) throw new Error("No connection when creating exchanges");
         this.channel = await this.connection.createConfirmChannel()
         if (!this.channel) throw new Error("No channel open when creating exchanges");
-        // try reconnecting on no connection and do this a few times then only throw error;
-        for (const exchange of this.exchanges) {
-            // exchange example : {name: 'test-exchange', type: "x-delayed-message", options: { autoDetele: false, durable:true, arguments: { "x-delayed-type": "direct"}}}
-            await this.channel.assertExchange(exchange.exchange, exchange.type, exchange.options)
-        }
-    }
-    private async createQueues() {
-        if (!this.connection) throw new Error("No connection when creating exchanges");
-        this.channel = await this.connection.createConfirmChannel()
-        if (!this.channel) throw new Error("No channel open when creating exchanges");
-        // try reconnecting on no connection and do this a few times then only throw error;
-        for (const queue of this.queues) {
-            // queue example : {name: 'test-q', options: { durable: true }
-            await this.channel.assertQueue(queue.queue, queue.options)
-        }
-    }
+        
+        // Create dlx exchange
+        await this.channel.assertExchange("dlx.cmd", "direct", { autoDelete: false, durable: true });
+        
+        // Create dlx queue
+        await this.channel.assertQueue("cmd-dlx-queue", { durable: true });
+        
+        // Bind dlx x and q
+        await this.channel.bindQueue("cmd-dlx-queue", "dlx.cmd", "cmd-dlx-queue");
 
+        // try reconnecting on no connection and do this a few times then only throw error;
+        // exchange example : {name: 'test-exchange', type: "x-delayed-message", options: { autoDetele: false, durable:true, arguments: { "x-delayed-type": "direct"}}}
+        const ex = await this.channel.assertExchange(this.exchange.exchange, this.exchange.type, this.exchange.options)
+        // Create queue
+        // queue example : {name: 'test-q', options: { durable: true }
+        const q = await this.channel.assertQueue(this.queue.queue, this.queue.options)
+
+        // Bind queue to exchange
+        await this.channel.bindQueue(q.queue, ex.exchange, q.queue);
+    }
 
     async startPublisher(queue: string, exchange: string) {
         if(!this.connection) throw new Error("No connection")
@@ -84,13 +86,6 @@ export default class Amqp {
         this.pubChannel.on("close", function () {
             logger.info("[AMQP] channel closed");
         });
-    
-        ////assert the exchange: 'my-delay-exchange' to be a x-delayed-message,
-        // this.pubChannel.assertExchange(this.exchange, "x-delayed-message", { autoDelete: false, durable: true, arguments: { 'x-delayed-type': "direct" } })
-        
-        //Bind the queue: this.queue to the exchnage: this.exchange with the binding key this.queue
-        // second this.queue (3rd arg) is routingkey
-        this.pubChannel.bindQueue(queue, exchange, queue);
         
         // eslint-disable-next-line no-constant-condition
         while (true) {
@@ -148,14 +143,12 @@ export default class Amqp {
         });
 
         await this.workerChannel.prefetch(10);
-        await this.workerChannel.assertQueue(queue, { durable: true });
         
         this.workerChannel.consume(queue, (msg) => {
             if (!msg) return;
             console.log(msg.properties.headers["x-death"]);
             console.log(msg.properties.headers);
-            console.log(msg.properties
-            );
+            console.log(msg.properties);
             handler(msg, (ok: boolean) => {
                 if (!this.workerChannel) throw new Error("Channel not initialized")
                 try {

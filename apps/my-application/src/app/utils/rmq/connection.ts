@@ -6,40 +6,42 @@ import { Message } from "amqplib";
 export const connectRMQ = async () => {
     // worker()
     // task()
-    const exchanges = [{
+    const exchange = {
         exchange: "test-x2",
         type: 'direct',
         options: { autoDetele: false, durable: true }
-    },
-    {
-        exchange: "dlx.cmd",
-        type: "direct",
-        options: { autoDelete: false, durable: true }
-        }
-    ]
-    const queues = [
-        {
-            queue: "cmd-dlx-queue",
-            options: { durable: true }
-            },
-        {
+    }
+    const queue = {
         queue: "test-q2",
         options: { durable: true, deadLetterExchange: "dlx.cmd" },
-    },
-    ]
-    const rmq = new Amqp(exchanges, queues);
+    }
+    
+    const rmq = new Amqp(exchange, queue);
     await rmq.init();
     await rmq.startWorker("test-q2", (msg: Message, cb: any) => {
         logger.info(msg.content.toString() + " --- received: " + rmq.current_time());
         const is = Math.floor(Math.random() * 4) === 2
-        cb(true);
+        cb(is);
     });
-    await rmq.startPublisher(queues[0].queue, exchanges[0].exchange);
+    // await rmq.startWorker("cmd-dlx-queue", (msg: Message, cb: any) => {
+    //     logger.info(msg.content.toString() + " DLX QUEUE --- received: " + rmq.current_time());
+    //     const is = Math.floor(Math.random() * 4) === 2;
+    //     const date = new Date();
+    //     const time = rmq.current_time()
+    //     try {
+    //         rmq.publish(exchange.exchange, queue.queue, Buffer.from("work sent: " + time), {}, 3);
+    //         cb(true);
+    //     } catch (e) {
+    //         logger.error(e);
+    //         cb(false)
+    //     }
+    // });
+    await rmq.startPublisher(queue.queue, exchange.exchange);
     //Publish a message every 10 second. The message will be delayed 10seconds.
     setInterval(function() {
         const date = new Date();
         const time = rmq.current_time()
-        rmq.publish(exchanges[0].exchange, queues[0].queue, Buffer.from("work sent: " + time), {}, 3);
+        rmq.publish(exchange.exchange, queue.queue, Buffer.from("work sent: " + time), {}, 3);
     }, 3000);    
 }
 
