@@ -36,11 +36,12 @@ export default class Amqp {
         this.connection.on("error", (err) => {
             if (err.message !== "Connection closing")
                 logger.error(`[AMQP] conn error ${err.message}`);
+                // reconnect!!
         });
     
         this.connection.on("close", () => {
             logger.error("[AMQP] reconnecting");
-            return setTimeout(this.init, 1000);
+            return setTimeout(this.init.bind(this), 1000);
         });
     
         logger.info("[AMQP] connected");
@@ -56,13 +57,13 @@ export default class Amqp {
         if (!this.channel) throw new Error("No channel open when creating exchanges");
         
         // Create dlx exchange
-        await this.channel.assertExchange("dlx.cmd", "direct", { autoDelete: false, durable: true });
+        await this.channel.assertExchange("dlx", "direct", { autoDelete: false, durable: true });
         
         // Create dlx queue
         await this.channel.assertQueue("cmd-dlx-queue", { durable: true });
         
         // Bind dlx x and q
-        await this.channel.bindQueue("cmd-dlx-queue", "dlx.cmd", "cmd-dlx-queue");
+        await this.channel.bindQueue("cmd-dlx-queue", "dlx", "dlx.#");
 
         // try reconnecting on no connection and do this a few times then only throw error;
         // exchange example : {name: 'test-exchange', type: "x-delayed-message", options: { autoDetele: false, durable:true, arguments: { "x-delayed-type": "direct"}}}
@@ -95,39 +96,45 @@ export default class Amqp {
         }
     }
     publish(exchange: string, routingKey: string, content: any, options: Options.Publish, maxDelayRetries: number) {
-        options.headers = { maxDelayRetries };
+        options.headers = { maxDelayRetries, died: 0 };
         try {
             if (!this.pubChannel) throw new Error("NO CHANNEL")
             const published = this.pubChannel.publish(exchange, routingKey, content, options);
             if (!published) {
                 logger.error("[AMQP] publish failed");
+                // Push task to DB or Redis but check error first
                 this.offlinePubQueue.push([exchange, routingKey, content, options]);
                 this.pubChannel.close();
             }
         } catch (e: any) {
             logger.error(`[AMQP] failed ${e.message}`);
+            // Push task to DB or Redis But check error first
             this.offlinePubQueue.push([exchange, routingKey, content, options]);
         }
     }
-    // publishWithDelay(msg: Message) {
-    //     console.log(msg.properties.headers["x-death"]);
-    //     console.log(msg.properties.headers);
-        
-    //     if(msg.properties.headers["x-death"] > msg.properties.headers.maxDelayRetries)
-    //     if(delay) Object.assign(options.headers, { "x-delay": delay })
-    //     try {
-    //         if (!this.pubChannel) throw new Error("NO CHANNEL")
-    //         const published = this.pubChannel.publish(exchange, routingKey, content, options);
-    //         if (!published) {
-    //             logger.error("[AMQP] publish failed");
-    //             this.offlinePubQueue.push([exchange, routingKey, content]);
-    //             this.pubChannel.close();
-    //         }
-    //     } catch (e: any) {
-    //         logger.error(`[AMQP] failed ${e.message}`);
-    //         this.offlinePubQueue.push([routingKey, content, delay]);
-    //     }
-    // }
+    
+    publishWithDelay(msg: Message, delay: number) {
+        console.log(msg.properties.headers["died"]);
+        console.log(msg.properties.headers);
+        if(msg.properties.headers["died"] > msg.properties.headers.maxDelayRetries) {
+            // Handle msgs that expired also the max of retries
+            return false;
+        }
+        const options = { headers: msg.properties.headers }
+        if(delay) Object.assign(options.headers, { "x-delay": delay })
+        try {
+            if (!this.pubChannel) throw new Error("NO CHANNEL")
+            const published = this.pubChannel.publish(this.exchange.exchange, this.queue.queue, msg.content, options);
+            if (!published) {
+                logger.error("[AMQP] publish failed");
+                this.offlinePubQueue.push([this.exchange.exchange, this.queue.queue, msg.content]);
+                this.pubChannel.close();
+            }
+        } catch (e: any) {
+            logger.error(`[AMQP] failed ${e.message}`);
+            this.offlinePubQueue.push([this.queue.queue, msg.content, delay]);
+        }
+    }
 
     // A worker that acks messages only if processed succesfully
     async startWorker(queue: string, handler: (msg: Message, cb: any) => void) {
@@ -153,7 +160,7 @@ export default class Amqp {
                 if (!this.workerChannel) throw new Error("Channel not initialized")
                 try {
                     if (ok) this.workerChannel.ack(msg as amqp.Message);
-                    else this.workerChannel.reject(msg as amqp.Message, true);
+                    else this.workerChannel.nack(msg as amqp.Message);
                 } catch (e) {
                     this.closeOnErr(e as Error);
                 }

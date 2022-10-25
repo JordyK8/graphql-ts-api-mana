@@ -7,13 +7,13 @@ export const connectRMQ = async () => {
     // worker()
     // task()
     const exchange = {
-        exchange: "test-x2",
+        exchange: "test-x",
         type: 'direct',
         options: { autoDetele: false, durable: true }
     }
     const queue = {
-        queue: "test-q2",
-        options: { durable: true, deadLetterExchange: "dlx.cmd" },
+        queue: "test-q",
+        options: { durable: true, deadLetterExchange: "dlx", messageTtl: 20000 },
     }
     
     const rmq = new Amqp(exchange, queue);
@@ -23,19 +23,6 @@ export const connectRMQ = async () => {
         const is = Math.floor(Math.random() * 4) === 2
         cb(is);
     });
-    // await rmq.startWorker("cmd-dlx-queue", (msg: Message, cb: any) => {
-    //     logger.info(msg.content.toString() + " DLX QUEUE --- received: " + rmq.current_time());
-    //     const is = Math.floor(Math.random() * 4) === 2;
-    //     const date = new Date();
-    //     const time = rmq.current_time()
-    //     try {
-    //         rmq.publish(exchange.exchange, queue.queue, Buffer.from("work sent: " + time), {}, 3);
-    //         cb(true);
-    //     } catch (e) {
-    //         logger.error(e);
-    //         cb(false)
-    //     }
-    // });
     await rmq.startPublisher(queue.queue, exchange.exchange);
     //Publish a message every 10 second. The message will be delayed 10seconds.
     setInterval(function() {
