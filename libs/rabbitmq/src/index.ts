@@ -1,1 +1,1 @@
-export * from './lib/rabbitmq';
+export * from './lib/Rmq';

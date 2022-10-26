@@ -6,26 +6,6 @@
     "auditLog": "logs/.bf170124d43c88ed680237ccd6c74a154c9426eb-audit.json",
     "files": [
         {
-            "date": 1666467713911,
-            "name": "logs/app-console-2022-10-22-21.log",
-            "hash": "a9ccec2c1c92d5d73d0e0a2c00c5c33bacf855d069651ccc7e6c0219f4a42d40"
-        },
-        {
-            "date": 1666468832081,
-            "name": "logs/app-console-2022-10-22-22.log",
-            "hash": "cff8e156a9b6edc65099cae1d6fb210dbc2015a8661c7b6028d980e99d42f297"
-        },
-        {
-            "date": 1666516910469,
-            "name": "logs/app-console-2022-10-23-11.log",
-            "hash": "c0625e43ac7b0836646950ba7f63d29159197a239afe58f2610a8dc0771693d5"
-        },
-        {
-            "date": 1666520225108,
-            "name": "logs/app-console-2022-10-23-12.log",
-            "hash": "d255e5310398a3c078938cad449f5988609740ad7a5a3807afa4fa86238a7192"
-        },
-        {
             "date": 1666550035995,
             "name": "logs/app-console-2022-10-23-20.log",
             "hash": "3bcd3f133b445d905d84d2a5073d7205e1c79ea284d91224c2f452baed03494e"
@@ -59,6 +39,26 @@
             "date": 1666725146994,
             "name": "logs/app-console-2022-10-25-21.log",
             "hash": "04a593cc6d8167579638bfbe0932a5f30e1ba5969c4a9bc6329e41ce480bd084"
+        },
+        {
+            "date": 1666799568907,
+            "name": "logs/app-console-2022-10-26-17.log",
+            "hash": "cce2706dd3c971c16274cbfbf077fa2db8ed1effbf3a7f50a1f7a1b58f8e1c4c"
+        },
+        {
+            "date": 1666800008480,
+            "name": "logs/app-console-2022-10-26-18.log",
+            "hash": "f9be6e9a479f7d0a34497789bc6b8bf6c1500d9f62d696049631cfff1d1e0088"
+        },
+        {
+            "date": 1666804495179,
+            "name": "logs/app-console-2022-10-26-19.log",
+            "hash": "e0fabdd73a90901666de979a771cc368964e15eb84818de79f63732c7a7a0e64"
+        },
+        {
+            "date": 1666807595452,
+            "name": "logs/app-console-2022-10-26-20.log",
+            "hash": "a552e3e74adbbab190002b6f8065f5e9622c98966dabe93afda6502010a76653"
         }
     ],
     "hashType": "sha256"

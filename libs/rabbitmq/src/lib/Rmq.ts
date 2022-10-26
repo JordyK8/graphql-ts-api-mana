@@ -1,17 +1,8 @@
 import amqp, { Message, Options } from "amqplib";
 import { logging as logger } from "@my-foods2/logging";
+import { ExchangeObject, QueueObject } from "@my-foods2/interfaces"
 
-interface ExchangeObject {
-    name: string,
-    type: 'direct' | 'topic' | 'headers' | 'fanout' | 'match' | 'x-delayed-message' | string,
-    options?: Options.AssertExchange
-}
-interface QueueObject {
-    name: string,
-    options?: Options.AssertQueue
-}
-
-export default class Amqp {
+export class Amqp {
     private workerChannel: amqp.Channel | null;
     private channel: amqp.Channel | null;
     private pubChannel: amqp.Channel | null;
@@ -95,7 +86,7 @@ export default class Amqp {
             this.publish(m[0], m[1], m[2], m[3], 3);
         }
     }
-    publish(exchange: string, routingKey: string, content: any, options: Options.Publish, maxDelayRetries: number) {
+    publish(exchange: string, routingKey: string, content: any, options: Options.Publish, maxDelayRetries = 0) {
         options.headers = { maxDelayRetries, died: 0 };
         try {
             if (!this.pubChannel) throw new Error("NO CHANNEL")
@@ -114,11 +105,11 @@ export default class Amqp {
     }
     
     publishWithDelay(msg: Message, delay: number) {
-        const defaultDelay = [6000,12000,30000,60000,90000,180000]
-        console.log(msg.properties.headers["died"]);
+        const defaultDelay = [{ value: 30000, label:"30s"},{ value: 30000, label:"1min"},{ value: 60000, label:"2min"},{ value: 90000, label:"5min"},{ value: 300000, label:"10min"},{ value: 300000, label:"15min"},{ value: 900000, label:"30min"}]
         console.log(msg.properties.headers);
-        const died = msg.properties.headers["died"]
-        if (died > msg.properties.headers.maxDelayRetries) {
+        const died = msg.properties.headers["died"] || 0;
+        const maxDelayTimes = msg.properties.headers["maxDelayRetries"]
+        if (died >= maxDelayTimes) {
             // Handle msgs that expired also the max of retries
             logger.error("Max retries reached");
             return false;
@@ -126,7 +117,7 @@ export default class Amqp {
         msg.properties.headers["died"] = died + 1
         const options = { headers: msg.properties.headers }
         if(delay) Object.assign(options.headers, { "x-delay": delay })
-        else Object.assign(options.headers, { "x-delay": defaultDelay[died] })
+        else Object.assign(options.headers, { "x-delay": defaultDelay[died].value })
         try {
             if (!this.pubChannel) throw new Error("NO CHANNEL")
             const published = this.pubChannel.publish(this.exchange.name, this.queue.name, msg.content, options);
@@ -135,7 +126,7 @@ export default class Amqp {
                 this.offlinePubQueue.push([this.exchange.name, this.queue.name, msg.content]);
                 this.pubChannel.close();
             }
-            logger.info(`[AMQP] publish with delay: ${delay || defaultDelay[died]}`);
+            logger.info(`[AMQP] publish with delay: ${delay ||  defaultDelay[died].label}`);
         } catch (e: any) {
             logger.error(`[AMQP] failed ${e.message}`);
             this.offlinePubQueue.push([this.queue.name, msg.content, delay]);
@@ -159,11 +150,8 @@ export default class Amqp {
         
         this.workerChannel.consume(queue, (msg) => {
             if (!msg) return;
-            console.log(msg.properties);
             handler(msg, (ok: boolean) => {
-                if (!this.workerChannel) throw new Error("Channel not initialized")
-                console.log(ok);
-                
+                if (!this.workerChannel) throw new Error("Channel not initialized")                
                 try {
                     if (ok) this.workerChannel.ack(msg as amqp.Message);
                     else {
