@@ -12,7 +12,11 @@
         "sourceMap": true,
         "baseUrl": ".",
         "paths": {
+<<<<<<< HEAD
             "@my-foods2/crypt": ["libs/crypt/src/index.ts"],
+=======
+            "@my-foods2/interfaces": ["libs/interfaces/src/index.ts"],
+>>>>>>> development
             "@my-foods2/logging": ["libs/logging/src/index.ts"],
             "@my-foods2/products-data-client": [
                 "libs/products-data-client/src/index.ts"

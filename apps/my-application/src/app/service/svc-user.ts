@@ -6,6 +6,8 @@ import MailModule from "../utils/modules/MailModule";
 import UploadModule from "../utils/modules/UploadModule";
 import { IRole, Role } from "../utils/mongodb/models/Role.schema";
 import { IUser, User, UUser } from "../utils/mongodb/models/User.schema";
+import { exchange, queue } from "../config/rmq";
+import { rmq } from "../command/rmq";
 dotenv.config();
 
 export default class UserService {
@@ -26,7 +28,12 @@ export default class UserService {
         })
         user.image = await uploadImageToImbb()
         try {
-            return User.create(user);
+            const createdUser = await User.create(user);
+            rmq.publish(exchange.name, queue.name, Buffer.from(JSON.stringify({
+                action: "create_user", user
+            })), {}, 3)
+            return createdUser;
+            
         } catch (e) {
             logger.error(e)
             throw new Error("Somethind went wrong with fetching product.")

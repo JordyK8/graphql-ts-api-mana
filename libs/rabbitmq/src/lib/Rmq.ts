@@ -1,17 +1,8 @@
 import amqp, { Message, Options } from "amqplib";
 import { logging as logger } from "@my-foods2/logging";
+import { ExchangeObject, QueueObject } from "@my-foods2/interfaces"
 
-interface ExchangeObject {
-    exchange: string,
-    type: 'direct' | 'topic' | 'headers' | 'fanout' | 'match' | 'x-delayed-message' | string,
-    options?: Options.AssertExchange
-}
-interface QueueObject {
-    queue: string,
-    options?: Options.AssertQueue
-}
-
-export default class Amqp {
+export class Amqp {
     private workerChannel: amqp.Channel | null;
     private channel: amqp.Channel | null;
     private pubChannel: amqp.Channel | null;
@@ -57,7 +48,7 @@ export default class Amqp {
         if (!this.channel) throw new Error("No channel open when creating exchanges");
         
         // Create dlx exchange
-        await this.channel.assertExchange("dlx", "direct", { autoDelete: false, durable: true });
+        await this.channel.assertExchange("dlx", "topic", { autoDelete: false, durable: true });
         
         // Create dlx queue
         await this.channel.assertQueue("cmd-dlx-queue", { durable: true });
@@ -67,10 +58,10 @@ export default class Amqp {
 
         // try reconnecting on no connection and do this a few times then only throw error;
         // exchange example : {name: 'test-exchange', type: "x-delayed-message", options: { autoDetele: false, durable:true, arguments: { "x-delayed-type": "direct"}}}
-        const ex = await this.channel.assertExchange(this.exchange.exchange, this.exchange.type, this.exchange.options)
+        const ex = await this.channel.assertExchange(this.exchange.name, this.exchange.type, this.exchange.options)
         // Create queue
         // queue example : {name: 'test-q', options: { durable: true }
-        const q = await this.channel.assertQueue(this.queue.queue, this.queue.options)
+        const q = await this.channel.assertQueue(this.queue.name, this.queue.options)
 
         // Bind queue to exchange
         await this.channel.bindQueue(q.queue, ex.exchange, q.queue);
@@ -95,7 +86,7 @@ export default class Amqp {
             this.publish(m[0], m[1], m[2], m[3], 3);
         }
     }
-    publish(exchange: string, routingKey: string, content: any, options: Options.Publish, maxDelayRetries: number) {
+    publish(exchange: string, routingKey: string, content: any, options: Options.Publish, maxDelayRetries = 0) {
         options.headers = { maxDelayRetries, died: 0 };
         try {
             if (!this.pubChannel) throw new Error("NO CHANNEL")
@@ -114,25 +105,31 @@ export default class Amqp {
     }
     
     publishWithDelay(msg: Message, delay: number) {
-        console.log(msg.properties.headers["died"]);
+        const defaultDelay = [{ value: 30000, label:"30s"},{ value: 30000, label:"1min"},{ value: 60000, label:"2min"},{ value: 90000, label:"5min"},{ value: 300000, label:"10min"},{ value: 300000, label:"15min"},{ value: 900000, label:"30min"}]
         console.log(msg.properties.headers);
-        if(msg.properties.headers["died"] > msg.properties.headers.maxDelayRetries) {
+        const died = msg.properties.headers["died"] || 0;
+        const maxDelayTimes = msg.properties.headers["maxDelayRetries"]
+        if (died >= maxDelayTimes) {
             // Handle msgs that expired also the max of retries
+            logger.error("Max retries reached");
             return false;
         }
+        msg.properties.headers["died"] = died + 1
         const options = { headers: msg.properties.headers }
         if(delay) Object.assign(options.headers, { "x-delay": delay })
+        else Object.assign(options.headers, { "x-delay": defaultDelay[died].value })
         try {
             if (!this.pubChannel) throw new Error("NO CHANNEL")
-            const published = this.pubChannel.publish(this.exchange.exchange, this.queue.queue, msg.content, options);
+            const published = this.pubChannel.publish(this.exchange.name, this.queue.name, msg.content, options);
             if (!published) {
                 logger.error("[AMQP] publish failed");
-                this.offlinePubQueue.push([this.exchange.exchange, this.queue.queue, msg.content]);
+                this.offlinePubQueue.push([this.exchange.name, this.queue.name, msg.content]);
                 this.pubChannel.close();
             }
+            logger.info(`[AMQP] publish with delay: ${delay ||  defaultDelay[died].label}`);
         } catch (e: any) {
             logger.error(`[AMQP] failed ${e.message}`);
-            this.offlinePubQueue.push([this.queue.queue, msg.content, delay]);
+            this.offlinePubQueue.push([this.queue.name, msg.content, delay]);
         }
     }
 
@@ -153,14 +150,14 @@ export default class Amqp {
         
         this.workerChannel.consume(queue, (msg) => {
             if (!msg) return;
-            console.log(msg.properties.headers["x-death"]);
-            console.log(msg.properties.headers);
-            console.log(msg.properties);
             handler(msg, (ok: boolean) => {
-                if (!this.workerChannel) throw new Error("Channel not initialized")
+                if (!this.workerChannel) throw new Error("Channel not initialized")                
                 try {
                     if (ok) this.workerChannel.ack(msg as amqp.Message);
-                    else this.workerChannel.nack(msg as amqp.Message);
+                    else {
+                        this.workerChannel.ack(msg as amqp.Message)
+                        this.publishWithDelay(msg,0)
+                    }
                 } catch (e) {
                     this.closeOnErr(e as Error);
                 }
