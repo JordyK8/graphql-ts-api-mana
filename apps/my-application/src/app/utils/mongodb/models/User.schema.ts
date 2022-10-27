@@ -1,7 +1,7 @@
 // import { accessibleRecordsPlugin } from '@casl/mongoose';
 import mongoose, { Document, Schema } from 'mongoose';
-import Crypt from '../../Crypt/encryption';
-import Hash from '../../Crypt/hashing';
+import {Crypt, Hash} from '@my-foods2/crypt';
+
 import { IRole, Role } from './Role.schema';
 
 const userSchema = new mongoose.Schema({

@@ -1,4 +1,3 @@
-import dotenv from "dotenv"
 import UserInputInvite from "../graphql/users/Interfaces";
 import { Crypt } from "@my-foods2/crypt"
 import { logging as logger } from "@my-foods2/logging";
@@ -7,8 +6,7 @@ import UploadModule from "../utils/modules/UploadModule";
 import { IRole, Role } from "../utils/mongodb/models/Role.schema";
 import { IUser, User, UUser } from "../utils/mongodb/models/User.schema";
 import { exchange, queue } from "../config/rmq";
-import { rmq } from "../command/rmq";
-dotenv.config();
+import { rmq } from "../utils/rmq/rmq";
 
 export default class UserService {
     private user: IUser;
