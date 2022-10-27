@@ -28,14 +28,33 @@ const businessSchema = new mongoose.Schema({
             }
         }
     ],
+    page: {
+        settings: {
+            template: { type: Number, default: 1 },
+        }
+    },
+    locations: [
+        { 
+            name: { type: String, required: true },
+            address: {
+                postalCode: { type: String, required: true },
+                city: { type: String, required: true },
+                street:  { type: String, required: true },
+                houseNubmer:  { type: Number, required: true },
+                houseNubmerAddition:  { type: String, required: false },
+            }
+        }
+    ],
 
 },
     { versionKey: false });
 
 interface UBusiness {
     reviews: IReview[],
-    user: string,
-    status: number,
+    name: string,
+    links: { link: string, name: string },
+    page: { settings: { template: number } },
+    
 }
 
 interface IBusinessModel extends UBusiness, Document { }

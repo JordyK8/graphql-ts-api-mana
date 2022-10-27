@@ -1,10 +1,10 @@
 import crypto from "crypto";
-import config from "../../config/app";
+import { encryption } from "@my-foods2/variables";
 
-export default class Crypt {
-    static readonly cipher: string = String(config.encryption.cipher);
-    static readonly key: Buffer = Buffer.from(String(config.encryption.key).substring(7), 'base64');
-    static readonly sha: string = String(config.encryption.sha);
+export class Crypt {
+    static readonly cipher: string = String(encryption.CIPHER);
+    static readonly key: Buffer = Buffer.from(String(encryption.KEY).substring(7), 'base64');
+    static readonly sha: string = String(encryption.SHA);
 
     /**
      * Create payload encrypted with master key.
@@ -13,31 +13,19 @@ export default class Crypt {
      * @param value
      */
     public static encrypt(value: string) {
-        try {
-            const iv = crypto.randomBytes(16);
-
-            const base64Iv = iv.toString('base64');
-
-            const cipher = crypto.createCipheriv(this.cipher, this.key, iv);
-
-            let encrypted = cipher.update(value, 'utf8', 'base64');
-
-            encrypted += cipher.final('base64');
-
-            const mac = this.hash(encrypted, base64Iv);
-
-            const payloadObject = {
-                'iv': base64Iv,
-                'value': encrypted,
-                'mac': mac
-            }
-
-            const _payload = JSON.stringify(payloadObject);
-
-            return Buffer.from(_payload).toString('base64');
-        } catch (e) {
-            throw e;
+        const iv = crypto.randomBytes(16);
+        const base64Iv = iv.toString('base64');
+        const cipher = crypto.createCipheriv(this.cipher, this.key, iv);
+        let encrypted = cipher.update(value, 'utf8', 'base64');
+        encrypted += cipher.final('base64');
+        const mac = this.hash(encrypted, base64Iv);
+        const payloadObject = {
+            'iv': base64Iv,
+            'value': encrypted,
+            'mac': mac
         }
+        const _payload = JSON.stringify(payloadObject);
+        return Buffer.from(_payload).toString('base64');
     }
 
     /**
@@ -147,9 +135,12 @@ export default class Crypt {
      * @param {Object} payload
      */
     private static isValidPayload(payload: any) {
-        return (payload.hasOwnProperty('iv') && payload.hasOwnProperty('value') && payload.hasOwnProperty('mac'));
+        return (Object.prototype.hasOwnProperty.call(payload, 'iv')
+            && Object.prototype.hasOwnProperty.call(payload, 'value') 
+            && Object.prototype.hasOwnProperty.call(payload, 'mac')
+        );
     }
-    
+
     /**
      * Generate random string
      * @param {Object} payload

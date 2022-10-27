@@ -1,6 +1,6 @@
 import dotenv from "dotenv"
 import UserInputInvite from "../graphql/users/Interfaces";
-import Crypt from "../utils/Crypt/encryption";
+import { Crypt } from "@my-foods2/crypt"
 import { logging as logger } from "@my-foods2/logging";
 import MailModule from "../utils/modules/MailModule";
 import UploadModule from "../utils/modules/UploadModule";
