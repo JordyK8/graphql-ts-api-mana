@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "nx serve",
-    "pm2:start:my-application": "pm2 start npm start my-application",
+    "start": "npx nx run-many --parallel --target=serve --projects=my-application,reviewer",
     "build": "nx build",
     "test": "nx test",
     "test:all": "nx run-many --target=test",

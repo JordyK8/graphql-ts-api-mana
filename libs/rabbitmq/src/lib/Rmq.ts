@@ -10,8 +10,10 @@ export class Amqp {
     private offlinePubQueue: any;
     private queue: QueueObject;
     private connection: amqp.Connection | null;
+    private type: "worker" | "publisher" | "both";
+    private handler: ((msg: Message, cb: any) => void) | undefined;
 
-    constructor(exchange: ExchangeObject, queue: QueueObject) {
+    constructor(exchange: ExchangeObject, queue: QueueObject, type: "worker" | "publisher" | "both", handler?: (msg: Message, cb: any) => void) {
         this.channel = null;
         this.pubChannel = null;
         this.workerChannel = null;
@@ -19,6 +21,8 @@ export class Amqp {
         this.connection = null;
         this.queue = queue;
         this.exchange = exchange;
+        this.type = type;
+        this.handler = handler;
     }
     async init() {        
         this.connection = await amqp.connect("amqp://admin:password@localhost" + "?heartbeat=60");
@@ -40,6 +44,8 @@ export class Amqp {
     }
     async whenConnected() {
         await this.createExchangeAndQueue();
+        if (["worker", "both"].includes(this.type) && this.handler) await this.startWorker(this.queue.name, this.handler);
+        if (["publisher", "both"].includes(this.type)) await this.startPublisher(this.queue.name, this.exchange.name);
     }
 
     private async createExchangeAndQueue() {
@@ -109,13 +115,23 @@ export class Amqp {
         console.log(msg.properties.headers);
         const died = msg.properties.headers["died"] || 0;
         const maxDelayTimes = msg.properties.headers["maxDelayRetries"]
-        if (died >= maxDelayTimes) {
-            // Handle msgs that expired also the max of retries
-            logger.error("Max retries reached");
-            return false;
-        }
         msg.properties.headers["died"] = died + 1
         const options = { headers: msg.properties.headers }
+        // If max died send to dlx
+        if (died >= maxDelayTimes || died >= defaultDelay.length) {
+            // Handle msgs that expired also the max of retries
+            logger.error("Max retries reached");
+            if (!this.pubChannel) throw new Error("NO CHANNEL")
+            const published = this.pubChannel.publish("dlx", "dlx.dead", msg.content, options);
+            if (!published) {
+                logger.error("[AMQP] publish failed");
+                this.offlinePubQueue.push([this.exchange.name, this.queue.name, msg.content]);
+                this.pubChannel.close();
+            }
+            logger.info(`[AMQP] publish with delay: ${delay ||  defaultDelay[died].label}`);
+            return false;
+        }
+        
         if(delay) Object.assign(options.headers, { "x-delay": delay })
         else Object.assign(options.headers, { "x-delay": defaultDelay[died].value })
         try {
