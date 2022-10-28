@@ -29,5 +29,5 @@ interface URole {
 }
 
 interface IRoleModel extends URole, Document {}
-export interface IRole extends IRoleModel { }
+export type IRole = IRoleModel
 export const Role = mongoose.model<IRoleModel>('roles', roleSchema);

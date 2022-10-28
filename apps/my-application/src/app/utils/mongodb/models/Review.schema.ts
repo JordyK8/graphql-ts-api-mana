@@ -75,6 +75,6 @@ interface UReview {
 
 interface IReviewModel extends UReview, Document { }
 
-export interface IReview extends IReviewModel { }
+export type IReview = IReviewModel
 
 export const Review = mongoose.model<IReviewModel>('reviews', reviewSchema);
