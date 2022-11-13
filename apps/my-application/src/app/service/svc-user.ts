@@ -16,6 +16,8 @@ export default class UserService {
     }
 
     public static async register(user: IUserInput): Promise<IUser> {
+        console.log('user', user);
+        
         const uploadImageToImbb = () => new Promise((resolve, reject) => {
             user.image.then(async (f: FileUpload) => {
                 try {
@@ -42,7 +44,7 @@ export default class UserService {
         }
     }
 
-    public static invite(user: UserInputInvite, hook: string): Promise<boolean> {
+    public static invite(user: UserInputInvite, hook: string): boolean {
         // Email users
         const { email, companyId, companyName } = user;
         MailModule.send({

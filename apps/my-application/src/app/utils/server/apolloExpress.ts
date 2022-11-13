@@ -17,7 +17,7 @@ import JWT from '../JWT';
 
 async function runServer() {
   const app = express();
-  const port = 3000;
+  const port = 3001;
   if (process.env.NODE_ENV === 'development') {
     app.use(errorhandler());
   }
@@ -80,6 +80,7 @@ async function applyApollo(app: any) {
         console.log('origin', origin);
           const whitelist = [
             "http://localhost:8080",
+            "http://localhost:3000",
             undefined,
           ];
           if(!origin) return callback(null, true)

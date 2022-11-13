@@ -6,59 +6,9 @@
     "auditLog": "logs/.bf170124d43c88ed680237ccd6c74a154c9426eb-audit.json",
     "files": [
         {
-            "date": 1666722043609,
-            "name": "logs/app-console-2022-10-25-20.log",
-            "hash": "0a5b1cd8a83aa23f14722feeed5e9262d31e123fc0849795cf164e6c26059b0a"
-        },
-        {
-            "date": 1666725146994,
-            "name": "logs/app-console-2022-10-25-21.log",
-            "hash": "04a593cc6d8167579638bfbe0932a5f30e1ba5969c4a9bc6329e41ce480bd084"
-        },
-        {
-            "date": 1666799568907,
-            "name": "logs/app-console-2022-10-26-17.log",
-            "hash": "cce2706dd3c971c16274cbfbf077fa2db8ed1effbf3a7f50a1f7a1b58f8e1c4c"
-        },
-        {
-            "date": 1666800008480,
-            "name": "logs/app-console-2022-10-26-18.log",
-            "hash": "f9be6e9a479f7d0a34497789bc6b8bf6c1500d9f62d696049631cfff1d1e0088"
-        },
-        {
-            "date": 1666804495179,
-            "name": "logs/app-console-2022-10-26-19.log",
-            "hash": "e0fabdd73a90901666de979a771cc368964e15eb84818de79f63732c7a7a0e64"
-        },
-        {
-            "date": 1666807595452,
-            "name": "logs/app-console-2022-10-26-20.log",
-            "hash": "a552e3e74adbbab190002b6f8065f5e9622c98966dabe93afda6502010a76653"
-        },
-        {
-            "date": 1666892599764,
-            "name": "logs/app-console-2022-10-27-19.log",
-            "hash": "c8c62378a871d6d563965b991a2cc47d13f48bb5f506a440b41b1ed54486a37f"
-        },
-        {
-            "date": 1666895327293,
-            "name": "logs/app-console-2022-10-27-20.log",
-            "hash": "6975d8d01b0144553611dd19628640d2f52c623542477b725e52c998e6e79f9f"
-        },
-        {
-            "date": 1666950538983,
-            "name": "logs/app-console-2022-10-28-11.log",
-            "hash": "0ef2d6d2292d63b37ab2d0f7c6969291e8dc27f3db79944766f3015f69fbeefc"
-        },
-        {
-            "date": 1666961279449,
-            "name": "logs/app-console-2022-10-28-14.log",
-            "hash": "1cf5b2f72ef185d8d2022c89c10158235ef3d17fdf047f7ac6d44afb63fc67c8"
-        },
-        {
-            "date": 1666962065353,
-            "name": "logs/app-console-2022-10-28-15.log",
-            "hash": "61e62647091e8c8beb86b903ee014a042dfdf9e19e5efc08c9aef305097862c5"
+            "date": 1668340804726,
+            "name": "logs/app-console-2022-11-13-13.log",
+            "hash": "3b618e875072ab455173dd394531439af4599263b200bdc248e7697cb1774ad5"
         }
     ],
     "hashType": "sha256"
