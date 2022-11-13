@@ -1,4 +1,4 @@
-FROM node:lts-alpine
+FROM node:18
 WORKDIR /app
 COPY ./dist/apps/my-application .
 ENV PORT=3000
