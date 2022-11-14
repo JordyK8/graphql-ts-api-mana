@@ -52,13 +52,22 @@ const businessSchema = new mongoose.Schema({
 interface UBusiness {
     reviews: IReview[],
     name: string,
-    links: { link: string, name: string },
+    links: { link: string, name: string }[],
     page: { settings: { template: number } },
-    
+    locations: { 
+        name: string,
+        address: {
+            postalCode: string,
+            city: string,
+            street:  string,
+            houseNubmer: number,
+            houseNubmerAddition: string,
+        }
+    }[]
 }
 
 interface IBusinessModel extends UBusiness, Document { }
 
-export interface IBusiness extends IBusinessModel { }
+export type IBusiness = IBusinessModel
 
 export const Business = mongoose.model<IBusinessModel>('businesses', businessSchema);

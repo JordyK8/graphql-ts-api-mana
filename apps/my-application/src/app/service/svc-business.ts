@@ -1,37 +1,29 @@
-import { rmq } from "../command/rmq";
-import { exchange, queue } from "../config/rmq";
-import BusinessRegistrationInput from "../graphql/businesses/interfaces";
-import { Business } from "../utils/mongodb/models/Business.schema";
-import { User } from "../utils/mongodb/models/User.schema";
-import UploadModule from "../utils/modules/UploadModule";
-import { logging as logger } from "@my-foods2/logging";
 
+import dotenv from "dotenv"
+import { logging as logger } from "@my-foods2/logging";
+import { Business, IBusiness } from "../utils/mongodb/models/Business.schema";
+import AdminUserService from "./svc-adminUser";
+import { misc } from "@my-foods2/variables";
+import { IAdminUserInput } from "../utils/mongodb/models/AdminUser.schema";
+dotenv.config();
 
 export default class BusinessService {
-    constructor() {
 
-    }
-
-    async registerNewBusiness(registrationData: BusinessRegistrationInput) {
-        // Create Business
-        const business = await Business.create(registrationData.business);
-        // Create User
-        const user = await User.create(registrationData.user);
-        // TODO: rmq msg
-    }
-
-    async handleAsset(asset: any, businessId: string, assetName: string) {
-        const uploadImageToImbb = async () => asset.then(async (f: any) => {
-            try {
-                const body = f.createReadStream();
-                return UploadModule.uploadToImbb(body);
-            } catch (e) {
-                logger.error(e)
-                throw new Error("Something went wrong with creating new product.");
-            }
-        })
-        const url = await uploadImageToImbb()
-
-        return Business.updateOne({ _id: businessId }, { page: { $push: { assets: { [assetName]: url } } } })
+    public static async create(business: IBusiness, user: IAdminUserInput): Promise<IBusiness> {
+        const { name, links, locations } = business;
+        try {
+            const business = await Business.create({
+                name,
+                links,
+                locations
+            });
+            const adminUser = await AdminUserService.register(user);
+            const adminUserService = new AdminUserService(adminUser);
+            await adminUserService.assignRole(misc.business.user.defaultRole);
+            return business;
+        } catch (e) {
+            logger.error(e)
+            throw new Error("Somethind went wrong with fetching product.")
+        }
     }
 }

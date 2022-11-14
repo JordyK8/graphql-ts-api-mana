@@ -3,5 +3,10 @@ dotenv.config();
 export default {
     TEST: "TEST",
     SERVER_SECRET: process.env["SERVER_SECRET"],
-    APP_ENV: process.env["APP_ENV"]
+    APP_ENV: process.env["APP_ENV"],
+    business: {
+        user: {
+            defaultRole: "businessAdmin"
+        }
+    }
 }

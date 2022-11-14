@@ -16,7 +16,9 @@ const resolvers = {
   },
 
   Mutation: {
-    createUser: async(parent: any, { user }: { user: IUser }, _: any) => {
+    createUser: async (parent: any, { user }: { user: IUser }, _: any) => {
+      console.log('here', user);
+      
       return UserService.register(user)
     },
     inviteUser: async (parent: any, { user, hook }: { user: UserInputInvite, hook: string }, { userId }: { userId: string }) => {

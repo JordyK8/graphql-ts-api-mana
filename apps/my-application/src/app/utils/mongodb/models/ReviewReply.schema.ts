@@ -45,6 +45,6 @@ interface UReviewReply {
 
 interface IReviewReplyModel extends UReviewReply, Document {}
 
-export interface IReviewReply extends IReviewReplyModel { }
+export type IReviewReply = IReviewReplyModel
 
 export const ReviewReply = mongoose.model<IReviewReplyModel>('review_replies', reviewReplySchema);
