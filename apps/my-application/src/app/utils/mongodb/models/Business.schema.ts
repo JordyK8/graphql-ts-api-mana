@@ -66,6 +66,22 @@ interface UBusiness {
     }[]
 }
 
+export type IBusinessInput = {
+    name: string,
+    links?: { link: string, name: string }[],
+    page?: { settings: { template: number } },
+    locations: { 
+        name: string,
+        address: {
+            postalCode: string,
+            city: string,
+            street:  string,
+            houseNubmer: number,
+            houseNubmerAddition: string,
+        }
+    }[]
+}
+
 interface IBusinessModel extends UBusiness, Document { }
 
 export type IBusiness = IBusinessModel

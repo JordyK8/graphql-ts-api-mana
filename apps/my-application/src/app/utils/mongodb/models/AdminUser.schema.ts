@@ -66,8 +66,8 @@ export type IAdminUserInput = {
   password: string,
   firstName: string,
   lastName: string,
-  image: any,
-  businesses: string[]
+  image?: any,
+  businesses?: string[]
 }
 
 export const AdminUser = mongoose.model<IAdminUserModel>('admin_users', adminUserSchema);

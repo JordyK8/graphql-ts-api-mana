@@ -15,7 +15,7 @@ export default class AdminUserService {
         this.user = user;
     }
 
-    public static async register(user: IAdminUserInput): Promise<IAdminUser> {
+    public static async register(user: IAdminUserInput, businessId: string): Promise<IAdminUser> {
         const uploadImageToImbb = () => new Promise((resolve, reject) => {
             user.image.then(async (f: FileUpload) => {
                 try {
@@ -28,11 +28,12 @@ export default class AdminUserService {
                 }
             })
         });
-        user.image = await uploadImageToImbb()
+        if (user.image) user.image = await uploadImageToImbb()
+        user.businesses = [businessId];
         try {
             const createdUser = await AdminUser.create(user);
             rmq.publish(exchange.name, queue.name, Buffer.from(JSON.stringify({
-                action: "create_user", user
+                action: "create_business_user", user
             })), {}, 3)
             return createdUser;
             
