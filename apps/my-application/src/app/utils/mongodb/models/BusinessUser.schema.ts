@@ -5,7 +5,7 @@ import {Crypt, Hash} from '@my-foods2/crypt';
 import { IRole, Role } from './Role.schema';
 import { Business } from './Business.schema';
 
-const adminUserSchema = new mongoose.Schema({
+const businessUserSchema = new mongoose.Schema({
   email: {
     type: String,
     set: Hash.makeSearchHash
@@ -49,7 +49,7 @@ const adminUserSchema = new mongoose.Schema({
 { versionKey: false });
 
 
-export interface UAdminUser {
+export interface UBusinessUser {
   email: string,
   password: string,
   firstName: string,
@@ -58,10 +58,10 @@ export interface UAdminUser {
   image: string,
 }
 
-interface IAdminUserModel extends UAdminUser, Document { }
+interface IBusinessUserModel extends UBusinessUser, Document { }
 
-export type IAdminUser = IAdminUserModel
-export type IAdminUserInput = {
+export type IBusinessUser = IBusinessUserModel
+export type IBusinessUserInput = {
   email: string,
   password: string,
   firstName: string,
@@ -70,4 +70,4 @@ export type IAdminUserInput = {
   businesses?: string[]
 }
 
-export const AdminUser = mongoose.model<IAdminUserModel>('admin_users', adminUserSchema);
+export const BusinessUser = mongoose.model<IBusinessUserModel>('admin_users', businessUserSchema);

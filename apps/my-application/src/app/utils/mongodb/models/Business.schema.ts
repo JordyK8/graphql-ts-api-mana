@@ -38,6 +38,8 @@ const businessSchema = new mongoose.Schema({
             name: { type: String, required: true },
             address: {
                 postalCode: { type: String, required: true },
+                lon: { type: String, required: true },
+                lat: { type: String, required: true },
                 city: { type: String, required: true },
                 street:  { type: String, required: true },
                 houseNubmer:  { type: Number, required: true },
@@ -58,6 +60,8 @@ interface UBusiness {
         name: string,
         address: {
             postalCode: string,
+            lon: string,
+            lat: string
             city: string,
             street:  string,
             houseNubmer: number,

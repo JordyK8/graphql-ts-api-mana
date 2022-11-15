@@ -1,27 +1,29 @@
 import dotenv from "dotenv"
 import { logging as logger } from "@my-foods2/logging";
 import { Business, IBusiness, IBusinessInput } from "../utils/mongodb/models/Business.schema";
-import AdminUserService from "./svc-adminUser";
+import BusinessUserService from "./svc-businessUser";
 import { misc } from "@my-foods2/variables";
-import { IAdminUserInput } from "../utils/mongodb/models/AdminUser.schema";
+import { IBusinessUserInput } from "../utils/mongodb/models/BusinessUser.schema";
 import UploadModule from "../utils/modules/UploadModule";
 dotenv.config();
 
 export default class BusinessService {
 
-    public static async create(business: IBusinessInput, user: IAdminUserInput): Promise<IBusiness> {
+    // Creates Business entity, BusinessUser entity and connect business to business user.
+    public static async create(business: IBusinessInput, user: IBusinessUserInput): Promise<IBusiness> {
         console.log('business', business);
         
         const { name, links, locations } = business;
+        locations = LocationsModule.getCoords(locations);
         try {
             const business = await Business.create({
                 name,
                 links,
                 locations
             });
-            const adminUser = await AdminUserService.register(user, business._id);
-            const adminUserService = new AdminUserService(adminUser);
-            await adminUserService.assignRole(misc.business.user.defaultRole);
+            const businessUser = await BusinessUserService.register(user, business._id);
+            const businessUserService = new BusinessUserService(businessUser, business);
+            await businessUserService.assignRole(misc.business.user.roles.owner);
             return business;
         } catch (e) {
             logger.error(e)
@@ -42,6 +44,15 @@ export default class BusinessService {
         const url = await uploadImageToImbb()
 
         return Business.updateOne({ _id: businessId }, { page: { $push: { assets: { [assetName]: url } } } })
+
+    }
+
+    async getNearby(location:any) {
+        // get postalcodes from google maps api
+        const postalCodes = ["3315MT"]
+        const companies = await Business.find({"locations.address.postalCode" : { $in: postalCodes }})
+            .limit(misc.pagination.businessFindNearyLimit)
+            .sort()
 
     }
 }

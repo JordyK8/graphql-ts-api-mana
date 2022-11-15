@@ -44,22 +44,21 @@ export default class UserService {
         }
     }
 
-    public static invite(user: UserInputInvite, hook: string): boolean {
+    public async invite(user: UserInputInvite, hook: string): Promise<void> {
         // Email users
-        const { email, companyId, companyName } = user;
-        MailModule.send({
+        const { email, name } = user;
+        await MailModule.send({
             to: email,
-            subject: `Invitation to ${companyName}`,
+            subject: `Invitation by ${this.user.firstName}`,
             view: 'template',
             data: {
-                name: "",
-                message: `You are invited to join the dashboard of ${companyName}. Click the button below to accept this invite and update your infromation.`,
-                link: `${hook}?data=${Crypt.encrypt(JSON.stringify(user))}`,
+                name,
+                message: `You are invited to by ${this.user.firstName} to join the food review sensation fo the world. Click the button below to accept this invite and update your infromation.`,
+                link: `${hook}?data=${Crypt.encrypt(JSON.stringify({user, invitedBy: this.user._id}))}`,
                 linkText: "Subscribe",
                 buttonColor: "white"
             },
         })
-        return true;
     }
 
     public static async confirm(id: string): Promise<boolean> {

@@ -3,19 +3,22 @@ import { Crypt } from "@my-foods2/crypt"
 import { logging as logger } from "@my-foods2/logging";
 import MailModule from "../utils/modules/MailModule";
 import UploadModule from "../utils/modules/UploadModule";
-import { IRole, Role } from "../utils/mongodb/models/Role.schema";
-import { AdminUser, IAdminUser, IAdminUserInput, UAdminUser } from "../utils/mongodb/models/AdminUser.schema";
+import { Role } from "../utils/mongodb/models/Role.schema";
+import { BusinessUser, IBusinessUser, IBusinessUserInput } from "../utils/mongodb/models/BusinessUser.schema";
 import { exchange, queue } from "../config/rmq";
 import { rmq } from "../utils/rmq/rmq";
 import { FileUpload } from "graphql-upload";
+import { IBusiness } from "../utils/mongodb/models/Business.schema";
 
-export default class AdminUserService {
-    private user: IAdminUser;
-    constructor(user: IAdminUser) {
-        this.user = user;
+export default class BusinessUserService {
+    private businessUser: IBusinessUser;
+    private business : IBusiness;
+    constructor(businessUser: IBusinessUser, business: IBusiness) {
+        this.businessUser = businessUser;
+        this.business = business;
     }
 
-    public static async register(user: IAdminUserInput, businessId: string): Promise<IAdminUser> {
+    public static async register(user: IBusinessUserInput, businessId: string): Promise<IBusinessUser> {
         const uploadImageToImbb = () => new Promise((resolve, reject) => {
             user.image.then(async (f: FileUpload) => {
                 try {
@@ -31,7 +34,7 @@ export default class AdminUserService {
         if (user.image) user.image = await uploadImageToImbb()
         user.businesses = [businessId];
         try {
-            const createdUser = await AdminUser.create(user);
+            const createdUser = await BusinessUser.create(user);
             rmq.publish(exchange.name, queue.name, Buffer.from(JSON.stringify({
                 action: "create_business_user", user
             })), {}, 3)
@@ -43,27 +46,25 @@ export default class AdminUserService {
         }
     }
 
-    public static invite(user: UserInputInvite, hook: string): boolean {
+    public async invite(email: string, hook: string): Promise<void> {
         // Email users
-        const { email, companyId, companyName } = user;
-        MailModule.send({
+        await MailModule.send({
             to: email,
-            subject: `Invitation to ${companyName}`,
+            subject: `Invitation to ${this.business.name}`,
             view: 'template',
             data: {
                 name: "",
-                message: `You are invited to join the dashboard of ${companyName}. Click the button below to accept this invite and update your infromation.`,
-                link: `${hook}?data=${Crypt.encrypt(JSON.stringify(user))}`,
+                message: `You are invited to join the dashboard of ${this.business.name}. Click the button below to accept this invite and update your infromation.`,
+                link: `${hook}?data=${Crypt.encrypt(JSON.stringify(this.business._id))}`,
                 linkText: "Subscribe",
                 buttonColor: "white"
             },
         })
-        return true;
     }
 
     public static async confirm(id: string): Promise<boolean> {
         // Sets confirmed to true
-        const res = await AdminUser.updateOne({ id }, { confirmed: true })
+        const res = await BusinessUser.updateOne({ id }, { confirmed: true })
         console.log(res);
 
         return res.acknowledged;
@@ -72,8 +73,8 @@ export default class AdminUserService {
   public async assignRole(name: string) {
         const role = await Role.findOne({ name }).select({ id: true });
         if (!role) throw new Error("Requested Role doesn't exists"); 
-        this.user.roles.push(role._id);
-        return this.user.save();
+        this.businessUser.roles.push(role._id);
+        return this.businessUser.save();
     }
 
     public async update(id: string) {

@@ -6,6 +6,8 @@ import path from "path";
 import lodash from "lodash";
 import DateModule from "./DateModule";
 import { logging as logger } from "@my-foods2/logging";
+export interface SendMailFields { to: string | string[], subject: string, view?: string, data: object, files?: any }
+
 export class MailModule {
     private transporter: nodemailer.Transporter;
 
@@ -23,25 +25,23 @@ export class MailModule {
      * @param data
      * @param files
      */
-    public send({
-                    to, subject, view = 'template', data, files = []
-                }: { to: string | string[], subject: string, view?: string, data: object, files?: any }) {
-
-                const templatePath = config.template.path + view + '.' + config.template.extension;
-
-                const html = this.getMailTemplate(templatePath, data);
-                const attachments = files.length ? this.getAttachments(files) : undefined;
-                // Send mail
-
-        this.transporter.sendMail({
-            from: `${config.from.name} <${config.from.address}>`,
-            to,
-            subject,
-            text: "",
-            html,
-            attachments
-        }).then(() => logger.info('email send'))
-            .catch(e => logger.error(e.message));
+    public send(sendmailFields: SendMailFields) {
+        const { to, subject, view = 'template', data, files = [] } = sendmailFields;
+        const templatePath = config.template.path + view + '.' + config.template.extension;
+        const html = this.getMailTemplate(templatePath, data);
+        const attachments = files.length ? this.getAttachments(files) : undefined;
+        // Send mail
+        return new Promise((resolve, reject) => {
+            this.transporter.sendMail({
+                from: `${config.from.name} <${config.from.address}>`,
+                to,
+                subject,
+                text: "",
+                html,
+                attachments
+            }).then(() => resolve(true))
+            .catch(e => reject(e));
+        })
     }
 
     /**
