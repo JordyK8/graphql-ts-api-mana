@@ -1,4 +1,6 @@
-import imgbbUploader from "imgbb-uploader";
+import { imgbbUploader } from "imgbb-uploader";
+import concat from 'concat-stream';
+import { Base64Encode } from 'base64-stream';
 import dotenv from "dotenv"
 
 dotenv.config();
@@ -19,8 +21,6 @@ export default class {
    */
   public static async uploadToImbb(fileStream: any): Promise<string> {    
     const streamToBase64 = (fileStream: any) => {
-      const concat = require('concat-stream')
-      const { Base64Encode } = require('base64-stream')
     
       return new Promise((resolve, reject) => {
         const base64 = new Base64Encode()
