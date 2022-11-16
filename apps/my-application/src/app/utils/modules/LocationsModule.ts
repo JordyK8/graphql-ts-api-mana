@@ -1,4 +1,4 @@
-import NodeGeocoder, { Geocoder } from "node-geocoder";
+import { Client, GeocodeRequest } from "@googlemaps/google-maps-services-js";
 export interface LocationObject{
     name: string,
     address: {
@@ -10,28 +10,33 @@ export interface LocationObject{
     }
 }
 export default class LocationsModule {
-    public lon: string;
-    public lat: string;
-    public geocoder: Geocoder;
+    public client: Client;
+    private args: GeocodeRequest;
     constructor(lon: string, lat: string) {
-        this.geocoder = NodeGeocoder({
-            provider: 'google',
-            // Optional depending on the providers
-            // fetch: customFetchImplementation,
-            apiKey: 'YOUR_API_KEY', // for Mapquest, OpenCage, Google Premier
-            formatter: null // 'gpx', 'string', ...
-        })
-        this.lon = lon;
-        this.lat = lat;
+        this.client = new Client({})
+        this.args = {
+            params: {
+                key: '<your-api-key>',
+                address: '',
+            }
+        }
     }
 
-    static async getCoords(locations: LocationObject[]) {
-        const res = await NodeGeocoder({
-            provider: 'google',
-            // Optional depending on the providers
-            // fetch: customFetchImplementation,
-            apiKey: 'YOUR_API_KEY', // for Mapquest, OpenCage, Google Premier
-            formatter: null // 'gpx', 'string', ...
-        }).geocode()
+    async getCoords(locations: LocationObject[]) {
+        for (const location of locations) {
+            this.args.params.address = `
+                ${location.address.street} 
+                ${location.address.houseNubmer} 
+                ${location.address.houseNubmerAddition} 
+                ${location.address.postalCode} 
+                ${location.address.city}
+            `;
+            this.client.geocode(this.args).then(gcResponse => {
+                const str = JSON.stringify(gcResponse.data.results[0]);
+                const str2 = JSON.stringify(gcResponse.data.results[1]);
+                console.log(`First result is: ${str}`);
+                console.log(`Second result is: ${str2}`);
+            });
+         }
     }
 }
