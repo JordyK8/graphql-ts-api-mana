@@ -5,6 +5,8 @@ import BusinessUserService from "./svc-businessUser";
 import { misc } from "@my-foods2/variables";
 import { IBusinessUserInput } from "../utils/mongodb/models/BusinessUser.schema";
 import UploadModule from "../utils/modules/UploadModule";
+import { rmq } from "../utils/rmq/rmq";
+import { exchange, queue } from "../config/rmq";
 dotenv.config();
 
 export default class BusinessService {
@@ -24,6 +26,9 @@ export default class BusinessService {
             const businessUser = await BusinessUserService.register(user, business._id);
             const businessUserService = new BusinessUserService(businessUser, business);
             await businessUserService.assignRole(misc.business.user.roles.owner);
+            rmq.publish(exchange.name, queue.name, Buffer.from(JSON.stringify({
+                action: "create_business", business
+            })), {}, 3)
             return business;
         } catch (e) {
             logger.error(e)

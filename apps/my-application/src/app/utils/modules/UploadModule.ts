@@ -1,5 +1,4 @@
-const imgbbUploader = require("imgbb-uploader");
-import { promises as fs } from "fs"
+import imgbbUploader from "imgbb-uploader";
 import dotenv from "dotenv"
 
 dotenv.config();
