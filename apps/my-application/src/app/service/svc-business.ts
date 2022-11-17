@@ -3,13 +3,38 @@ import { logging as logger } from "@my-foods2/logging";
 import { Business, IBusiness, IBusinessInput } from "../utils/mongodb/models/Business.schema";
 import BusinessUserService from "./svc-businessUser";
 import { misc } from "@my-foods2/variables";
-import { IBusinessUserInput } from "../utils/mongodb/models/BusinessUser.schema";
+import { IBusinessUser, IBusinessUserInput, UBusinessUser } from "../utils/mongodb/models/BusinessUser.schema";
 import UploadModule from "../utils/modules/UploadModule";
 import { rmq } from "../utils/rmq/rmq";
 import { exchange, queue } from "../config/rmq";
+import LocationsModule from "../utils/modules/LocationsModule";
+import { determineUpdateFields } from "../utils/mongodb/models/basicOperations";
 dotenv.config();
 
 export default class BusinessService {
+    public _id: string;
+    constructor(_id: string) {
+        this._id = _id;
+    }
+
+    // Get business object from DB
+    async getBusinessObject() {
+        return Business.findOne({ _id: this._id });
+    }
+
+    static async getBusinessObject(user: UBusinessUser) {
+        if(!Array.isArray(user.businesses)) {
+            if(typeof user.businesses === 'string') user.businesses = [user.businesses];
+            else throw Error(`Error getting businesses of user ${user._id} since businesses is of type ${typeof user.businesses} in stead of type string or array`);
+        }
+        return Business.find({ _id: { $in: user.businesses } });
+    }
+
+    public async updateBusiness(updateItem: any) {
+        const fields = determineUpdateFields('business', updateItem);
+        return Business.findOneAnyUpdate({ _id: this._id }, { $set: fields });
+    }
+
 
     // Creates Business entity, BusinessUser entity and connect business to business user.
     public static async create(business: IBusinessInput, user: IBusinessUserInput): Promise<IBusiness> {

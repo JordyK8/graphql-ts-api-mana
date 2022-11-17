@@ -10,12 +10,15 @@ import BusinessService from "../../service/svc-business";
 const resolvers = {
   Upload: g.GraphQLUpload,
   Query: {
-    // product: (parent: any, { productId }: { productId: string }, { userId }: { userId: string }) => {
-    //   return ProductService.getProduct(productId)
-    // },
-    // getProducts: (parent: any) => {
-    //   return ProductService.getProductList()
-    // },
+    getBusiness: async (parent: any, { businessId }: { businessId: string }, _: any) => {
+      const businessSvc = new BusinessService(businessId);
+      return businessSvc.getBusinessObject();
+    },
+    getBusinessOfUSer: async (parent: any, {}: {}, context: any, info: any) => {
+      console.log(info);
+      console.log(context);
+      return BusinessService.getBusinessObject(context.user.businesses);
+    },
   },
 
   Mutation: {

@@ -50,12 +50,14 @@ const businessUserSchema = new mongoose.Schema({
 
 
 export interface UBusinessUser {
+  _id: string,
   email: string,
   password: string,
   firstName: string,
   lastName: string,
   roles: string[],
   image: string,
+  businesses?: string[]
 }
 
 interface IBusinessUserModel extends UBusinessUser, Document { }
@@ -70,4 +72,4 @@ export type IBusinessUserInput = {
   businesses?: string[]
 }
 
-export const BusinessUser = mongoose.model<IBusinessUserModel>('admin_users', businessUserSchema);
+export const BusinessUser = mongoose.model<IBusinessUserModel>('business_users', businessUserSchema);
