@@ -30,7 +30,7 @@ export default class BusinessService {
         return Business.find({ _id: { $in: user.businesses } });
     }
 
-    public async updateBusiness(updateItem: any) {
+    public async update(updateItem: any) {
         const fields = determineUpdateFields('business', updateItem);
         return Business.findOneAnyUpdate({ _id: this._id }, { $set: fields });
     }
@@ -40,13 +40,13 @@ export default class BusinessService {
     public static async create(business: IBusinessInput, user: IBusinessUserInput): Promise<IBusiness> {
         console.log('business', business);
         
-        const { name, links, locations } = business;
-        locations = LocationsModule.getCoords(locations);
+        const { name, links, location } = business;
+        location = LocationsModule.getCoords(location);
         try {
             const business = await Business.create({
                 name,
                 links,
-                locations
+                location
             });
             const businessUser = await BusinessUserService.register(user, business._id);
             const businessUserService = new BusinessUserService(businessUser, business);
@@ -77,12 +77,20 @@ export default class BusinessService {
 
     }
 
-    async getNearby(location:any) {
-        // get postalcodes from google maps api
-        const postalCodes = ["3315MT"]
-        const companies = await Business.find({"locations.address.postalCode" : { $in: postalCodes }})
-            .limit(misc.pagination.businessFindNearyLimit)
-            .sort()
+    async getNearby(location: { lat: number, long: number }, distance: number) {
+        // TODO: check this recourse => https://www.codementor.io/@eyiwumiolaboye/build-a-geocoding-feature-for-finding-users-around-in-nodejs-api-1ev221br8i
+        let nearByUsers = await Business.find({
+            "location.coords": {
+              $nearSphere: {
+                $geometry: {
+                  type: "Point",
+                  coordinates: location,
+                },
+                $maxDistance: distance,
+              },
+            },
+          });
+        
 
     }
 }

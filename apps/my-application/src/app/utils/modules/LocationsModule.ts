@@ -22,8 +22,7 @@ export default class LocationsModule {
         }
     }
 
-    async getCoords(locations: LocationObject[]) {
-        for (const location of locations) {
+    async getCoords(location: LocationObject) {
             this.args.params.address = `
                 ${location.address.street} 
                 ${location.address.houseNubmer} 
@@ -37,6 +36,6 @@ export default class LocationsModule {
                 console.log(`First result is: ${str}`);
                 console.log(`Second result is: ${str2}`);
             });
-         }
+         
     }
 }

@@ -5,7 +5,7 @@ export default {
     SERVER_SECRET: process.env["SERVER_SECRET"],
     APP_ENV: process.env["APP_ENV"],
     updatableFields: { 
-        business: ['name','links', 'page', 'locations'],
+        business: ['name','links', 'page', 'location'],
     },
     business: {
         user: {

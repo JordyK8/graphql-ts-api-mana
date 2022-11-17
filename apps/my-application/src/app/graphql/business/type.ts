@@ -19,7 +19,7 @@ scalar Upload
     name: String!
     links: LinkInput[]
     page: PageInput[]
-    locations: LocationsInput[]
+    location: LocationsInput
   }
 
   input LinkInput {

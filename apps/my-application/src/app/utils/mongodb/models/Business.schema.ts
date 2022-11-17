@@ -33,20 +33,19 @@ const businessSchema = new mongoose.Schema({
             template: { type: Number, default: 1 },
         }
     },
-    locations: [
+    location: 
         { 
             name: { type: String, required: true },
+            coords: Array,
             address: {
                 postalCode: { type: String, required: true },
-                lon: { type: String, required: true },
-                lat: { type: String, required: true },
                 city: { type: String, required: true },
                 street:  { type: String, required: true },
                 houseNubmer:  { type: Number, required: true },
                 houseNubmerAddition:  { type: String, required: false },
             }
         }
-    ],
+    ,
 
 },
     { versionKey: false });
@@ -56,26 +55,26 @@ interface UBusiness {
     name: string,
     links: { link: string, name: string }[],
     page: { settings: { template: number } },
-    locations: { 
+    location: { 
         name: string,
+        coords: number[],
         address: {
             postalCode: string,
-            lon: string,
-            lat: string
             city: string,
             street:  string,
             houseNubmer: number,
             houseNubmerAddition: string,
         }
-    }[]
+    }
 }
 
 export type IBusinessInput = {
     name: string,
     links?: { link: string, name: string }[],
     page?: { settings: { template: number } },
-    locations: { 
+    location: { 
         name: string,
+        coords: number[],
         address: {
             postalCode: string,
             city: string,
@@ -83,7 +82,25 @@ export type IBusinessInput = {
             houseNubmer: number,
             houseNubmerAddition: string,
         }
-    }[]
+    }
+}
+
+export type IBusinessUpdateInput = {
+    _id: string,
+    name?: string,
+    links?: { link: string, name: string }[],
+    page?: { settings: { template: number } },
+    location?: { 
+        name: string,
+        coords: number[],
+        address: {
+            postalCode: string,
+            city: string,
+            street:  string,
+            houseNubmer: number,
+            houseNubmerAddition: string,
+        }
+    }
 }
 
 interface IBusinessModel extends UBusiness, Document { }
