@@ -75,11 +75,13 @@ export default class BusinessUserService {
         return res.acknowledged;
     }
 
-  public async assignRole(name: string) {
-        const role = await Role.findOne({ name }).select({ id: true });
-        if (!role) throw new Error("Requested Role doesn't exists"); 
-        this.businessUser.roles.push(role._id);
-        return this.businessUser.save();
+    public async assignRole(name: string) {
+        console.log('assign role', name, "to", this.businessUser.firstName);
+        return 
+        // const role = await Role.findOne({ name }).select({ id: true });
+        // if (!role) throw new Error("Requested Role doesn't exists"); 
+        // this.businessUser.roles.push(role._id);
+        // return this.businessUser.save();
     }
 
     public async update(id: string) {

@@ -51,7 +51,7 @@ export default class BusinessService {
             });
             const businessUser = await BusinessUserService.register(user, business._id);
             const businessUserService = new BusinessUserService(businessUser, business);
-            // await businessUserService.assignRole(misc.business.user.roles.owner);
+            await businessUserService.assignRole(misc.business.user.roles.owner);
             rmq.publish(exchange.name, queue.name, Buffer.from(JSON.stringify({
                 action: "create_business", business
             })), {}, 3)

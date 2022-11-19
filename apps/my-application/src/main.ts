@@ -1,3 +1,4 @@
+import './tracing.ts';
 import { start } from "./app/command";
 import { logging as logger } from "@my-foods2/logging"
 

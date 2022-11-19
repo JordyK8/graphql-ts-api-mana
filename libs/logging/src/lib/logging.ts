@@ -1,4 +1,6 @@
 import { createLogger, transports, format } from 'winston';
+import LokiTransport from "winston-loki"
+ 
 import winstonDailyRotateFile from 'winston-daily-rotate-file';
 
 const enumerateErrorFormat = format(info => {
@@ -51,5 +53,18 @@ switch (process.env.NODE_ENV) {
     break;
 }
 
+const options = {
+  transports: [new LokiTransport({
+      host: "http://localhost:3000",
+      labels: { app: 'honeyshop'},
+      json: true,
+      format: format.json(),
+      replaceTimestamp: true,
+      // onConnectionError: (err) => throw err
+    }),
+    new transports.Console({
+      format: format.combine(format.simple(), format.colorize())
+    })]
+}
 const logging = createLogger(option);
 export { logging };

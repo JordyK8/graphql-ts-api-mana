@@ -24,5 +24,7 @@ services:
 networks:
   rabbitmq_go_net:
     driver: bridge
+  monitoring:
+    driver: bridge
 volumes:
   mongodb_data_container:

@@ -19,6 +19,21 @@
             "date": 1668844886518,
             "name": "logs/app-console-2022-11-19-09.log",
             "hash": "fc071cc6eb093e9a1f12f19d4c16c0ba47f16e0144d292f9c862dec4c5140e3f"
+        },
+        {
+            "date": 1668853645247,
+            "name": "logs/app-console-2022-11-19-11.log",
+            "hash": "82d3c8db95ac580ccce8fe8c59a186c45e5c5cceef8b9527400c9dfc364fe7f0"
+        },
+        {
+            "date": 1668886526446,
+            "name": "logs/app-console-2022-11-19-20.log",
+            "hash": "9f25b057b0b5ba1f8f94e12bf8ecb344453562b01ff5ad00da7cbf30ff1879a1"
+        },
+        {
+            "date": 1668889751630,
+            "name": "logs/app-console-2022-11-19-21.log",
+            "hash": "ad0a438bb80fe135164d2726a009df43100327783093494cf7876119a2ed1c46"
         }
     ],
     "hashType": "sha256"

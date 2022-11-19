@@ -44,8 +44,8 @@ export class Amqp {
     }
     async whenConnected() {
         await this.createExchangeAndQueue();
-        if (["worker", "both"].includes(this.type) && this.handler) await this.startWorker(this.queue.name, this.handler);
         if (["publisher", "both"].includes(this.type)) await this.startPublisher(this.queue.name, this.exchange.name);
+        if (["worker", "both"].includes(this.type) && this.handler) await this.startWorker(this.queue.name, this.handler);
     }
 
     private async createExchangeAndQueue() {
