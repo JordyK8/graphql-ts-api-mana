@@ -17,14 +17,14 @@ const businessUserSchema = new mongoose.Schema({
   },
   firstName: {
     type: String,
-    get: Crypt.decrypt,
-    set: Crypt.encrypt,
+    // get: Crypt.decrypt,
+    // set: Crypt.encrypt,
     required: true
   },
   lastName: {
     type: String,
-    get: Crypt.decrypt,
-    set: Crypt.encrypt,
+    // get: Crypt.decrypt,
+    // set: Crypt.encrypt,
     required: true
   },
   image: {
@@ -50,7 +50,6 @@ const businessUserSchema = new mongoose.Schema({
 
 
 export interface UBusinessUser {
-  _id: string,
   email: string,
   password: string,
   firstName: string,

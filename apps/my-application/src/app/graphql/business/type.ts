@@ -7,18 +7,18 @@ const typeDefs = gql`
 scalar Upload
 
   type Query {
-    getProducts: [Product]
+    getBusiness: String
   }
 
   type Mutation {
-    createBusiness(business: BusinessInput!, user: BusinessUserInput!): User
+    createBusiness(business: BusinessInput!, user: BusinessUserInput!): BusinessUser!
    
   }
 
   input BusinessInput {
     name: String!
-    links: LinkInput[]
-    page: PageInput[]
+    links: [LinkInput]
+    page: PageInput
     location: LocationsInput
   }
 
@@ -44,8 +44,8 @@ scalar Upload
     postalCode: String
     city: String
     street:  String
-    houseNubmer: Int
-    houseNubmerAddition: String
+    houseNumber: Int
+    houseNumberAddition: String
   }
 
   input BusinessUserInput {
@@ -54,6 +54,13 @@ scalar Upload
     firstName: String!
     lastName: String!
     image: Upload
+  }
+
+  type BusinessUser {
+    _id: ID!
+    email: String!
+    firstName: String!
+    lastName: String!
   }
 
   

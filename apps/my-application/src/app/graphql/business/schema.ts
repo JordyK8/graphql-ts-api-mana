@@ -5,9 +5,9 @@ import { resolvers } from './resolver';
 import { typeDefs } from './type';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
-const productSchema = makeExecutableSchema({
+const businessSchema = makeExecutableSchema({
   typeDefs,
   resolvers,
 });
 
-export { productSchema };
+export { businessSchema };

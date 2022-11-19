@@ -11,7 +11,7 @@ import { disconnectMongoDB } from '../mongodb/mongoose';
 import { allSchema } from '../../graphql/schema';
 import helmet from 'helmet';
 import { logging as logger } from "@my-foods2/logging";
-import { graphqlUploadExpress } from "graphql-upload"
+import { graphqlUploadExpress } from "graphql-upload-ts"
 import cors from "cors";
 import JWT from '../JWT';
 

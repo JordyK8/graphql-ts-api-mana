@@ -41,8 +41,8 @@ const businessSchema = new mongoose.Schema({
                 postalCode: { type: String, required: true },
                 city: { type: String, required: true },
                 street:  { type: String, required: true },
-                houseNubmer:  { type: Number, required: true },
-                houseNubmerAddition:  { type: String, required: false },
+                houseNumber:  { type: Number, required: true },
+                houseNumberAddition:  { type: String, required: false },
             }
         }
     ,
@@ -62,8 +62,8 @@ interface UBusiness {
             postalCode: string,
             city: string,
             street:  string,
-            houseNubmer: number,
-            houseNubmerAddition: string,
+            houseNumber: number,
+            houseNumberAddition: string,
         }
     }
 }
@@ -79,8 +79,8 @@ export type IBusinessInput = {
             postalCode: string,
             city: string,
             street:  string,
-            houseNubmer: number,
-            houseNubmerAddition: string,
+            houseNumber: number,
+            houseNumberAddition: string,
         }
     }
 }
@@ -97,8 +97,8 @@ export type IBusinessUpdateInput = {
             postalCode: string,
             city: string,
             street:  string,
-            houseNubmer: number,
-            houseNubmerAddition: string,
+            houseNumber: number,
+            houseNumberAddition: string,
         }
     }
 }

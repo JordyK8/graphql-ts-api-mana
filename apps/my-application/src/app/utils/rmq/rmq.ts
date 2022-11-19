@@ -9,7 +9,7 @@ export const startRmq = async () => {
   await rmq.startPublisher(queue.name, exchange.name);
   rmq.publish("review-x", "review-q", Buffer.from(JSON.stringify({ test: "hoi1 from my-applivation" })), {}, 3)
   await rmq.startWorker(queue.name, (msg: Message, cb: any) => {
-    console.log(JSON.parse(msg.content.toString()))
+    console.log('RECEIVED %o', JSON.parse(msg.content.toString()))
     cb(true)
   })
 }

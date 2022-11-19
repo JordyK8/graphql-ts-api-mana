@@ -22,7 +22,7 @@ export default class BusinessService {
         return Business.findOne({ _id: this._id });
     }
 
-    static async getBusinessObject(user: UBusinessUser) {
+    static async getBusinessObject(user: IBusinessUser) {
         if(!Array.isArray(user.businesses)) {
             if(typeof user.businesses === 'string') user.businesses = [user.businesses];
             else throw Error(`Error getting businesses of user ${user._id} since businesses is of type ${typeof user.businesses} in stead of type string or array`);
@@ -32,7 +32,7 @@ export default class BusinessService {
 
     public async update(updateItem: any) {
         const fields = determineUpdateFields('business', updateItem);
-        return Business.findOneAnyUpdate({ _id: this._id }, { $set: fields });
+        return Business.findOneAndUpdate({ _id: this._id }, { $set: fields });
     }
 
 
@@ -41,7 +41,8 @@ export default class BusinessService {
         console.log('business', business);
         
         const { name, links, location } = business;
-        location = LocationsModule.getCoords(location);
+        // await LocationsModule.getCoords(location);
+        location.coords = [50,50];
         try {
             const business = await Business.create({
                 name,
@@ -50,7 +51,7 @@ export default class BusinessService {
             });
             const businessUser = await BusinessUserService.register(user, business._id);
             const businessUserService = new BusinessUserService(businessUser, business);
-            await businessUserService.assignRole(misc.business.user.roles.owner);
+            // await businessUserService.assignRole(misc.business.user.roles.owner);
             rmq.publish(exchange.name, queue.name, Buffer.from(JSON.stringify({
                 action: "create_business", business
             })), {}, 3)
@@ -79,7 +80,7 @@ export default class BusinessService {
 
     async getNearby(location: { lat: number, long: number }, distance: number) {
         // TODO: check this recourse => https://www.codementor.io/@eyiwumiolaboye/build-a-geocoding-feature-for-finding-users-around-in-nodejs-api-1ev221br8i
-        let nearByUsers = await Business.find({
+        const nearByUsers = await Business.find({
             "location.coords": {
               $nearSphere: {
                 $geometry: {

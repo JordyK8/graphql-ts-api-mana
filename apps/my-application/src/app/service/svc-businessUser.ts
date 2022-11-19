@@ -19,6 +19,7 @@ export default class BusinessUserService {
     }
 
     public static async register(user: IBusinessUserInput, businessId: string): Promise<IBusinessUser> {
+        
         const uploadImageToImbb = () => new Promise((resolve, reject) => {
             user.image.then(async (f: FileUpload) => {
                 try {
@@ -34,7 +35,11 @@ export default class BusinessUserService {
         if (user.image) user.image = await uploadImageToImbb()
         user.businesses = [businessId];
         try {
+            console.log("USER", user);
+            
             const createdUser = await BusinessUser.create(user);
+            console.log('CREATEDDD', createdUser);
+            
             rmq.publish(exchange.name, queue.name, Buffer.from(JSON.stringify({
                 action: "create_business_user", user
             })), {}, 3)

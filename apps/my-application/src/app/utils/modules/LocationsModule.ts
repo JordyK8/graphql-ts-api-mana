@@ -5,8 +5,8 @@ export interface LocationObject{
         postalCode: string,
         city: string,
         street:  string,
-        houseNubmer: number,
-        houseNubmerAddition: string,
+        houseNumber: number,
+        houseNumberAddition: string,
     }
 }
 export default class LocationsModule {
@@ -25,8 +25,8 @@ export default class LocationsModule {
     async getCoords(location: LocationObject) {
             this.args.params.address = `
                 ${location.address.street} 
-                ${location.address.houseNubmer} 
-                ${location.address.houseNubmerAddition} 
+                ${location.address.houseNumber} 
+                ${location.address.houseNumberAddition} 
                 ${location.address.postalCode} 
                 ${location.address.city}
             `;

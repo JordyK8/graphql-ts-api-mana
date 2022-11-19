@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
-import g from "graphql-upload";
+import { GraphQLUpload } from "graphql-upload-ts";
 import { IUser } from '../../utils/mongodb/models/User.schema';
 import UserService from '../../service/svc-user';
 import UserInputInvite from './Interfaces';
 const resolvers = {
-  Upload: g.GraphQLUpload,
+  Upload: GraphQLUpload,
   Query: {
     // product: (parent: any, { productId }: { productId: string }, { userId }: { userId: string }) => {
     //   return ProductService.getProduct(productId)
@@ -21,9 +21,10 @@ const resolvers = {
       
       return UserService.register(user)
     },
-    inviteUser: async (parent: any, { user, hook }: { user: UserInputInvite, hook: string }, { userId }: { userId: string }) => {
-      return UserService.invite(user, hook)
-    },
+    // inviteUser: async (parent: any, { user, hook }: { user: UserInputInvite, hook: string }, { userId }: { userId: string }) => {
+    //   const userSvc = new UserService(user)
+    //   return UserService.invite(user, hook)
+    // },
     confirmUser: async (parent: any, { id }: { id: string }, { userId }: { userId: string }) => {
       return UserService.confirm(id)
     },
