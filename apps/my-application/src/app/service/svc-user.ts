@@ -80,6 +80,8 @@ export default class UserService {
        
     }
 
+    
+
     async checkPermissions(type: string, level: number) {
         console.log('hoi')
     }
