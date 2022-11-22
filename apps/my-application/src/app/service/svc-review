@@ -1,0 +1,14 @@
+import { IReviewInput, Review } from "../utils/mongodb/models/Review.schema";
+import { rmq } from "../utils/rmq/rmq";
+import { exchange, queue } from "@my-foods2/reviewer";
+export default class ReviewService {
+    constructor() {
+
+    }
+    static async create(reviewInput: IReviewInput, userId: string) {
+        const review = await Review.create({ ...reviewInput, userId });
+        rmq.publish(exchange.name, queue.name, Buffer.from(JSON.stringify({
+            action: "create_review", review
+        })), {}, 3)
+    }
+}

@@ -4,13 +4,14 @@ import { logging as logger } from "@my-foods2/logging";
 import MailModule from "../utils/modules/MailModule";
 import UploadModule from "../utils/modules/UploadModule";
 import { IRole, Role } from "../utils/mongodb/models/Role.schema";
-import { IUser, IUserInput, User, UUser } from "../utils/mongodb/models/User.schema";
+import { IUser, IUserInput, User, IUserModel } from "../utils/mongodb/models/User.schema";
 import { exchange, queue } from "../config/rmq";
 import { rmq } from "../utils/rmq/rmq";
 import { FileUpload } from "graphql-upload";
+import { IReviewInput } from "../utils/mongodb/models/Review.schema";
 
 export default class UserService {
-    private user: IUser;
+    private user: IUserModel;
     constructor(user: IUser) {
         this.user = user;
     }
@@ -75,10 +76,9 @@ export default class UserService {
     }
 
     public async update(id: string) {
-        this.user.roles.push(id)
-        await this.user.save();
+       console.log('updating');
+       
     }
-
 
     async checkPermissions(type: string, level: number) {
         console.log('hoi')

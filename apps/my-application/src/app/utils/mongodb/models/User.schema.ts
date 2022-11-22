@@ -3,12 +3,21 @@ import mongoose, { Document, Schema } from 'mongoose';
 import {Crypt, Hash} from '@my-foods2/crypt';
 
 import { IRole, Role } from './Role.schema';
+import { Achievement } from './Achievement.schema';
 
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
     set: Hash.makeSearchHash
   },
+  achievements: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: Achievement,
+      required: true,
+    },
+  ],
+  rank: { type: Number , default: 0, required: true },
   password: {
     type: String,
     set: Hash.make,
@@ -43,6 +52,8 @@ const userSchema = new mongoose.Schema({
 
 export interface UUser {
   email: string,
+  achievements: string[],
+  rank: number,
   password: string,
   firstName: string,
   lastName: string,

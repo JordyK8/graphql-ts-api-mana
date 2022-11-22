@@ -8,11 +8,11 @@ import { BusinessUser, IBusinessUser, IBusinessUserInput } from "../utils/mongod
 import { exchange, queue } from "../config/rmq";
 import { rmq } from "../utils/rmq/rmq";
 import { FileUpload } from "graphql-upload";
-import { IBusiness } from "../utils/mongodb/models/Business.schema";
+import { IBusinessModel } from "../utils/mongodb/models/Business.schema";
 
 export default class BusinessUserService {
     private businessUser: IBusinessUser;
-    private business : IBusiness;
+    private business : IBusinessModel;
     constructor(businessUser: IBusinessUser, business: IBusiness) {
         this.businessUser = businessUser;
         this.business = business;

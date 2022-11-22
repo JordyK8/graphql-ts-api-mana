@@ -16,6 +16,7 @@ const businessSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    score: { type: Number , default: 0, required: true },
     links: [
         {
             name: {
@@ -53,6 +54,7 @@ const businessSchema = new mongoose.Schema({
 interface UBusiness {
     reviews: IReview[],
     name: string,
+    score: number,
     links: { link: string, name: string }[],
     page: { settings: { template: number } },
     location: { 
@@ -103,8 +105,6 @@ export type IBusinessUpdateInput = {
     }
 }
 
-interface IBusinessModel extends UBusiness, Document { }
-
-export type IBusiness = IBusinessModel
+export interface IBusinessModel extends UBusiness, Document { }
 
 export const Business = mongoose.model<IBusinessModel>('businesses', businessSchema);

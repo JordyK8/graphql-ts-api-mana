@@ -78,9 +78,17 @@ export default class BusinessService {
 
     }
 
-    async getNearby(location: { lat: number, long: number }, distance: number) {
+    async getRecommended(type: string, limit: number) {
+        const businesses = await Business.find().sort()
+    }
+
+    async assignReview(reviewId: string) {
+        return Business.update({_id: this._id }, { $push: { reviews: reviewId} });
+    }
+
+    async getNearby(location: { lat: number, long: number }, distance: number, limit: number, type: string) {
         // TODO: check this recourse => https://www.codementor.io/@eyiwumiolaboye/build-a-geocoding-feature-for-finding-users-around-in-nodejs-api-1ev221br8i
-        const nearByUsers = await Business.find({
+        let query = Business.find({
             "location.coords": {
               $nearSphere: {
                 $geometry: {
@@ -90,7 +98,15 @@ export default class BusinessService {
                 $maxDistance: distance,
               },
             },
-          });
+          }).limit(limit);
+          switch (type) {
+            case 'ranked':
+                query = query.sort({ score: -1 })
+                break;
+            default:
+                break;
+          }
+        return query;
         
 
     }
