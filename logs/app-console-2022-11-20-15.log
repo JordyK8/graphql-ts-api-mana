@@ -1,0 +1,27 @@
+{"level":"info","message":"[AMQP] connected"}
+{"level":"info","message":"Worker is started"}
+{"level":"info","message":"express server is listening port 3001"}
+{"level":"info","message":"MongoDB successfully connected"}
+{"level":"info","message":"Started the span, printing context","resource.service.name":"test-service","span_id":"2f8e60cf5b059d7f","trace_flags":"01","trace_id":"9e20d3d56ff83b552a7a89b7aa2305df"}
+{"level":"info","message":{"spanId":"2f8e60cf5b059d7f","traceFlags":1,"traceId":"9e20d3d56ff83b552a7a89b7aa2305df"},"resource.service.name":"test-service","span_id":"2f8e60cf5b059d7f","trace_flags":"01","trace_id":"9e20d3d56ff83b552a7a89b7aa2305df"}
+{"level":"info","message":"In main main spanning","resource.service.name":"test-service","span_id":"2f8e60cf5b059d7f","trace_flags":"01","trace_id":"9e20d3d56ff83b552a7a89b7aa2305df"}
+{"level":"info","message":"Ended span in main"}
+{"level":"info","message":"[AMQP] connected"}
+{"level":"info","message":"Worker is started"}
+{"level":"info","message":"express server is listening port 3001"}
+{"level":"info","message":"MongoDB successfully connected"}
+{"level":"info","message":"Started the span, printing context","resource.service.name":"test-service","span_id":"327803c0645d72e3","trace_flags":"01","trace_id":"807497ac877dcac63f26c470a6d1683d"}
+{"level":"info","message":{"spanId":"327803c0645d72e3","traceFlags":1,"traceId":"807497ac877dcac63f26c470a6d1683d"},"resource.service.name":"test-service","span_id":"327803c0645d72e3","trace_flags":"01","trace_id":"807497ac877dcac63f26c470a6d1683d"}
+{"level":"info","message":"In main main spanning","resource.service.name":"test-service","span_id":"327803c0645d72e3","trace_flags":"01","trace_id":"807497ac877dcac63f26c470a6d1683d"}
+{"level":"info","message":"Ended span in main"}
+{"level":"info","message":"[AMQP] connected"}
+{"level":"info","message":"Worker is started"}
+{"level":"info","message":"express server is listening port 3001"}
+{"level":"info","message":"MongoDB successfully connected"}
+{"level":"error","message":"[Graphql ERROR] Cannot return null for non-nullable field BusinessUser.firstName.\n\nGraphQL request:4:9\n3 |         _id\n4 |         firstName\n  |         ^\n5 |     }","resource.service.name":"test-service","span_id":"180c38c609ca4654","trace_flags":"01","trace_id":"2081b0623b8c40254a8022a3f80c2712"}
+{"level":"error","message":"[Graphql ERROR] Cannot return null for non-nullable field BusinessUser.firstName.\n\nGraphQL request:4:9\n3 |         _id\n4 |         firstName\n  |         ^\n5 |     }","resource.service.name":"test-service","span_id":"618f1b4b62b15ddb","trace_flags":"01","trace_id":"6f678ed886c551163cd383aa72f03d91"}
+{"level":"error","message":"[Graphql ERROR] Cannot return null for non-nullable field BusinessUser.firstName.\n\nGraphQL request:4:9\n3 |         _id\n4 |         firstName\n  |         ^\n5 |     }","resource.service.name":"test-service","span_id":"64259d4224160adf","trace_flags":"01","trace_id":"ea1b1754e7bfbc53b1b4077844ae3c25"}
+{"level":"info","message":"[AMQP] connected"}
+{"level":"info","message":"Worker is started"}
+{"level":"info","message":"express server is listening port 3001"}
+{"level":"info","message":"MongoDB successfully connected"}

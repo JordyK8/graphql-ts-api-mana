@@ -1,14 +1,10 @@
 import dotenv from "dotenv"
 import { logging as logger } from "@my-foods2/logging";
-import { Business, IBusiness, IBusinessInput } from "../utils/mongodb/models/Business.schema";
 import BusinessUserService from "./svc-businessUser";
 import { misc } from "@my-foods2/variables";
-import { IBusinessUser, IBusinessUserInput, UBusinessUser } from "../utils/mongodb/models/BusinessUser.schema";
-import UploadModule from "../utils/modules/UploadModule";
 import { rmq } from "../utils/rmq/rmq";
 import { exchange, queue } from "../config/rmq";
-import LocationsModule from "../utils/modules/LocationsModule";
-import { determineUpdateFields } from "../utils/mongodb/models/basicOperations";
+import { LocationsModule, UploadModule, IBusinessUser, IBusinessUserInput, UBusinessUser, Business, IBusinessInput, determineUpdateFields, IBusinessModel } from "@my-foods2/utils/utils";
 dotenv.config();
 
 export default class BusinessService {
@@ -37,7 +33,7 @@ export default class BusinessService {
 
 
     // Creates Business entity, BusinessUser entity and connect business to business user.
-    public static async create(business: IBusinessInput, user: IBusinessUserInput): Promise<IBusiness> {
+    public static async create(business: IBusinessInput, user: IBusinessUserInput): Promise<IBusinessModel> {
         console.log('business', business);
         
         const { name, links, location } = business;

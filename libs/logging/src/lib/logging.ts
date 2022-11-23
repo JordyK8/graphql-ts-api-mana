@@ -1,5 +1,4 @@
-import { createLogger, transports, format } from 'winston';
-import LokiTransport from "winston-loki"
+import winston, { createLogger, transports, format } from 'winston';
  
 import winstonDailyRotateFile from 'winston-daily-rotate-file';
 
@@ -25,15 +24,21 @@ const consoleRotateFile = new winstonDailyRotateFile({
   datePattern: 'YYYY-MM-DD-HH',
   maxFiles: '3d',
 });
+const mainConsole = new winston.transports.File({
+  level: 'info',
+  filename: './logs/all_logs.log',
+  maxsize: 52428800, //50MB
+  maxFiles: 5,
+})
 
 let option;
 const customFormatter = format.combine(enumerateErrorFormat(), format.json());
 
-switch (process.env.NODE_ENV) {
+switch (process.env.APP_ENV) {
   case 'development':
     option = {
       format: customFormatter,
-      level: 'debug',
+      level: 'info',
       transports: [console],
     };
     break;
@@ -41,7 +46,7 @@ switch (process.env.NODE_ENV) {
     option = {
       format: customFormatter,
       level: 'warn',
-      transports: [consoleRotateFile],
+      transports: [mainConsole],
     };
     break;
   default:
@@ -53,18 +58,7 @@ switch (process.env.NODE_ENV) {
     break;
 }
 
-const options = {
-  transports: [new LokiTransport({
-      host: "http://localhost:3000",
-      labels: { app: 'honeyshop'},
-      json: true,
-      format: format.json(),
-      replaceTimestamp: true,
-      // onConnectionError: (err) => throw err
-    }),
-    new transports.Console({
-      format: format.combine(format.simple(), format.colorize())
-    })]
-}
 const logging = createLogger(option);
+
+
 export { logging };

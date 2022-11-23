@@ -91,6 +91,3 @@ export class MailModule {
         return attachments;
     }
 }
-
-const mailModule = new MailModule();
-export default mailModule;

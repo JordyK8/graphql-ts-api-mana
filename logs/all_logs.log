@@ -1,0 +1,10 @@
+{"level":"info","message":"[AMQP] connected"}
+{"level":"info","message":"Worker is started"}
+{"level":"info","message":"express server is listening port 3001"}
+{"level":"info","message":"MongoDB successfully connected"}
+{"level":"info","message":"[AMQP] connected"}
+{"level":"info","message":"Worker is started"}
+{"level":"info","message":"express server is listening port 3001"}
+{"level":"info","message":"MongoDB successfully connected"}
+{"level":"error","message":"[Graphql ERROR] Cannot return null for non-nullable field BusinessUser.firstName.\n\nGraphQL request:4:9\n3 |         _id\n4 |         firstName\n  |         ^\n5 |     }","span_id":"f19833271ce49202","trace_flags":"01","trace_id":"9aff1aefbf955473d824e5fac62f2143"}
+{"level":"error","message":"[Graphql ERROR] Cannot return null for non-nullable field BusinessUser.firstName.\n\nGraphQL request:4:9\n3 |         _id\n4 |         firstName\n  |         ^\n5 |     }","span_id":"7c076693df18f17d","trace_flags":"01","trace_id":"bdccd83df018b725be911de6ce99ff00"}

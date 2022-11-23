@@ -9,7 +9,7 @@ export interface LocationObject{
         houseNumberAddition: string,
     }
 }
-export default class LocationsModule {
+export class LocationsModule {
     public client: Client;
     private args: GeocodeRequest;
     constructor(lon: string, lat: string) {

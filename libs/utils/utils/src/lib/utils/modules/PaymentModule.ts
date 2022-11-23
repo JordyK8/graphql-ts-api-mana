@@ -1,5 +1,5 @@
 import createMollieClient from '@mollie/api-client';
-export default class PaymentModule {
+export class PaymentModule {
   private client: any
   constructor() {
     this.client = createMollieClient({ apiKey: 'test_dHar4XY7LxsDOtmnkVtjNVWXLSlXsM' });

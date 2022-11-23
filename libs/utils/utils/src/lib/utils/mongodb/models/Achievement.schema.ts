@@ -28,6 +28,6 @@ export type IAchievementInput = {
 
 interface IAchievementModel extends UAchievement, Document { }
 
-export type IBusiness = IAchievementModel
+export type IAchievement = IAchievementModel
 
 export const Achievement = mongoose.model<IAchievementModel>('achievements', achievementSchema);

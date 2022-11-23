@@ -1,38 +1,22 @@
 import UserInputInvite from "../graphql/users/Interfaces";
 import { Crypt } from "@my-foods2/crypt"
 import { logging as logger } from "@my-foods2/logging";
-import MailModule from "../utils/modules/MailModule";
-import UploadModule from "../utils/modules/UploadModule";
-import { Role } from "../utils/mongodb/models/Role.schema";
-import { BusinessUser, IBusinessUser, IBusinessUserInput } from "../utils/mongodb/models/BusinessUser.schema";
 import { exchange, queue } from "../config/rmq";
 import { rmq } from "../utils/rmq/rmq";
 import { FileUpload } from "graphql-upload";
-import { IBusinessModel } from "../utils/mongodb/models/Business.schema";
+import { BusinessUser, IBusinessModel, IBusinessUser, IBusinessUserInput, MailModule, UploadModule } from "@my-foods2/utils/utils";
 
 export default class BusinessUserService {
     private businessUser: IBusinessUser;
     private business : IBusinessModel;
-    constructor(businessUser: IBusinessUser, business: IBusiness) {
+    constructor(businessUser: IBusinessUser, business: IBusinessModel) {
         this.businessUser = businessUser;
         this.business = business;
     }
 
     public static async register(user: IBusinessUserInput, businessId: string): Promise<IBusinessUser> {
         
-        const uploadImageToImbb = () => new Promise((resolve, reject) => {
-            user.image.then(async (f: FileUpload) => {
-                try {
-                    const body = f.createReadStream();
-                    await UploadModule.uploadToImbb(body);
-                    resolve(true);
-                } catch (e) {
-                    logger.error(e)
-                    reject("Something went wrong with creating new product.");
-                }
-            })
-        });
-        if (user.image) user.image = await uploadImageToImbb()
+        if (user.image) user.image = await UploadModule.graphQlUpload(user.image)
         user.businesses = [businessId];
         try {
             console.log("USER", user);
@@ -53,7 +37,8 @@ export default class BusinessUserService {
 
     public async invite(email: string, hook: string): Promise<void> {
         // Email users
-        await MailModule.send({
+        const mailModule = new MailModule()
+        await mailModule.send({
             to: email,
             subject: `Invitation to ${this.business.name}`,
             view: 'template',
